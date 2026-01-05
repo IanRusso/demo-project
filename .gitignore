@@ -1,0 +1,139 @@
+### Java/Maven Backend ###
+target/
+/.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+.kotlin
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.ctxt
+.mtj.tmp/
+hs_err_pid*
+replay_pid*
+dependency-reduced-pom.xml
+
+### IntelliJ IDEA ###x
+/.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+.recommenders
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+*.code-workspace
+
+### Node.js/React Frontend ###
+ui/node_modules/
+ui/npm-debug.log*
+ui/yarn-debug.log*
+ui/yarn-error.log*
+ui/lerna-debug.log*
+ui/.pnpm-debug.log*
+ui/dist/
+ui/dist-ssr/
+ui/build/
+ui/.cache/
+ui/.parcel-cache/
+ui/.next/
+ui/out/
+ui/.nuxt/
+ui/.vuepress/dist/
+ui/.serverless/
+ui/.fusebox/
+ui/.dynamodb/
+ui/.tern-port/
+ui/.env.local
+ui/.env.development.local
+ui/.env.test.local
+ui/.env.production.local
+ui/.eslintcache
+ui/.stylelintcache
+ui/.npm
+ui/.yarn/cache
+ui/.yarn/unplugged
+ui/.yarn/build-state.yml
+ui/.yarn/install-state.gz
+ui/.pnp.*
+
+### Dropwizard Logs ###
+*.log
+backend.log
+frontend.log
+
+### Mac OS ###
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+### Windows ###
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+### Linux ###
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+### Application Specific ###
+config.yml.local
+*.pid

@@ -1,0 +1,1 @@
+A service class represents a logical grouping of functionality e.g. UserService will allow you to create, read, update, and delete users

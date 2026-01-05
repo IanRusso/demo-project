@@ -1,0 +1,26 @@
+# Demo Server Configuration
+
+# Application-specific configuration
+applicationName: Demo Server
+
+# Server configuration
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+  adminConnectors:
+    - type: http
+      port: 8081
+
+# Logging configuration
+logging:
+  level: INFO
+  loggers:
+    com.irusso.demoserver: DEBUG
+  appenders:
+    - type: console
+      threshold: ALL
+      timeZone: UTC
+      target: stdout
+      logFormat: "%-5p [%d{ISO8601}] %c: %m%n%rEx"
+
