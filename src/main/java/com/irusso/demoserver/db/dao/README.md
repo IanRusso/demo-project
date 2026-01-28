@@ -6,6 +6,8 @@ This package contains Data Access Objects for database operations using JDBI3.
 
 The DAO pattern provides an abstraction layer between the application and the database. All DAOs extend the `StandardDao` abstract class which provides common CRUD operations.
 
+The framework uses `TableDefinition` and `ColumnDefinition` to automatically generate INSERT and UPDATE statements, eliminating boilerplate code.
+
 ## StandardDao
 
 The `StandardDao<T, ID>` abstract class provides generic database operations:
@@ -16,8 +18,8 @@ The `StandardDao<T, ID>` abstract class provides generic database operations:
 - `List<T> findAll()` - Get all entities
 - `List<T> findAll(int limit, int offset)` - Get entities with pagination
 - `long count()` - Count total entities
-- `ID insert(T entity)` - Insert new entity (abstract - must implement)
-- `boolean update(ID id, T entity)` - Update entity (abstract - must implement)
+- `ID insert(T entity)` - Insert new entity (automatically generated from TableDefinition)
+- `boolean update(ID id, T entity)` - Update entity (automatically generated from TableDefinition)
 - `boolean delete(ID id)` - Delete entity by ID
 - `boolean exists(ID id)` - Check if entity exists
 - `int deleteAll()` - Delete all entities (use with caution!)
@@ -27,9 +29,29 @@ The `StandardDao<T, ID>` abstract class provides generic database operations:
 - `List<T> executeQuery(String sql)` - Execute custom query
 - `List<T> executeQuery(String sql, Object... params)` - Execute query with parameters
 - `int executeUpdate(String sql, Object... params)` - Execute update/insert/delete
+- `TableDefinition<T> getTableDefinition()` - Get the table definition
 - `String getTableName()` - Get the table name
 - `String getIdColumn()` - Get the ID column name
 - `Jdbi getJdbi()` - Get the JDBI instance
+
+## TableDefinition and ColumnDefinition
+
+The `TableDefinition` class describes the structure of a database table, including:
+- Table name
+- ID column name
+- List of `ColumnDefinition` objects
+
+Each `ColumnDefinition` describes a column with:
+- Column name (database)
+- Java property name (for parameter binding)
+- Java type
+- Nullable flag
+- Insertable flag (include in INSERT statements)
+- Updatable flag (include in UPDATE statements)
+- Getter function (extract value from entity)
+- Setter function (set value on entity)
+
+This metadata enables StandardDao to automatically generate INSERT and UPDATE SQL statements.
 
 ## Creating a New DAO
 
@@ -49,21 +71,28 @@ public class MyEntity {
     private Long id;
     private String name;
     private Instant createdAt;
-    
+    private Instant updatedAt;
+
     // Getters and setters with @JsonProperty annotations
     @JsonProperty
     public Long getId() { return id; }
-    
+
     @JsonProperty
     public void setId(Long id) { this.id = id; }
-    
+
+    @JsonProperty
+    public String getName() { return name; }
+
+    @JsonProperty
+    public void setName(String name) { this.name = name; }
+
     // ... more getters/setters
 }
 ```
 
 ### 2. Create the DAO Class
 
-Create a DAO class extending `StandardDao`:
+Create a DAO class extending `StandardDao` with a `TableDefinition`:
 
 ```java
 package com.irusso.demoserver.db.dao;
@@ -71,68 +100,76 @@ package com.irusso.demoserver.db.dao;
 import com.irusso.demoserver.db.model.MyEntity;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
+import java.sql.Timestamp;
+import java.time.Instant;
 
 public class MyEntityDao extends StandardDao<MyEntity, Long> {
-    
+
     private static final String TABLE_NAME = "my_entities";
     private static final String ID_COLUMN = "id";
-    
+
+    // Create the table definition
+    private static TableDefinition<MyEntity> createTableDefinition() {
+        return TableDefinition.<MyEntity>builder()
+            .tableName(TABLE_NAME)
+            .idColumn(ID_COLUMN)
+            .addColumn(ColumnDefinition.<MyEntity>builder()
+                .columnName("name")
+                .javaType(String.class)
+                .nullable(false)
+                .getter(MyEntity::getName)
+                .setter((e, v) -> e.setName((String) v))
+                .build())
+            .addColumn(ColumnDefinition.<MyEntity>builder()
+                .columnName("created_at")
+                .javaType(Timestamp.class)
+                .nullable(false)
+                .insertable(true)
+                .updatable(false)  // Don't update created_at
+                .getter(e -> e.getCreatedAt() != null ?
+                    Timestamp.from(e.getCreatedAt()) :
+                    Timestamp.from(Instant.now()))
+                .setter((e, v) -> e.setCreatedAt(
+                    v != null ? ((Timestamp) v).toInstant() : null))
+                .build())
+            .addColumn(ColumnDefinition.<MyEntity>builder()
+                .columnName("updated_at")
+                .javaType(Timestamp.class)
+                .nullable(false)
+                .insertable(true)
+                .updatable(true)
+                .getter(e -> Timestamp.from(Instant.now()))  // Always use current time
+                .setter((e, v) -> e.setUpdatedAt(
+                    v != null ? ((Timestamp) v).toInstant() : null))
+                .build())
+            .build();
+    }
+
     // Define the RowMapper
     private static final RowMapper<MyEntity> MAPPER = (rs, ctx) -> {
         MyEntity entity = new MyEntity();
         entity.setId(rs.getLong("id"));
         entity.setName(rs.getString("name"));
-        
+
         Timestamp createdAt = rs.getTimestamp("created_at");
         if (createdAt != null) {
             entity.setCreatedAt(createdAt.toInstant());
         }
-        
+
+        Timestamp updatedAt = rs.getTimestamp("updated_at");
+        if (updatedAt != null) {
+            entity.setUpdatedAt(updatedAt.toInstant());
+        }
+
         return entity;
     };
-    
+
     public MyEntityDao(Jdbi jdbi) {
-        super(jdbi, TABLE_NAME, ID_COLUMN, MAPPER);
+        super(jdbi, createTableDefinition(), MAPPER);
     }
-    
-    @Override
-    public Long insert(MyEntity entity) {
-        String sql = """
-            INSERT INTO my_entities (name, created_at)
-            VALUES (:name, :createdAt)
-            RETURNING id
-            """;
-        
-        return jdbi.withHandle(handle ->
-            handle.createQuery(sql)
-                .bind("name", entity.getName())
-                .bind("createdAt", Timestamp.from(
-                    entity.getCreatedAt() != null ? 
-                    entity.getCreatedAt() : Instant.now()
-                ))
-                .mapTo(Long.class)
-                .one()
-        );
-    }
-    
-    @Override
-    public boolean update(Long id, MyEntity entity) {
-        String sql = """
-            UPDATE my_entities 
-            SET name = :name, updated_at = :updatedAt
-            WHERE id = :id
-            """;
-        
-        return jdbi.withHandle(handle -> {
-            int rows = handle.createUpdate(sql)
-                .bind("id", id)
-                .bind("name", entity.getName())
-                .bind("updatedAt", Timestamp.from(Instant.now()))
-                .execute();
-            return rows > 0;
-        });
-    }
-    
+
+    // No need to implement insert() or update() - they're automatic!
+
     // Add custom query methods
     public List<MyEntity> findByName(String name) {
         String sql = "SELECT * FROM my_entities WHERE name = :name";
@@ -149,15 +186,42 @@ In `GainfullyServerApplication.java`, create and register the DAO:
 @Override
 public void run(GainfullyServerConfiguration configuration, Environment environment) {
     // ... existing code ...
-    
+
     // Create DAOs
     final MyEntityDao myEntityDao = new MyEntityDao(jdbi);
-    
+
     // Pass to resources that need it
     final MyEntityResource myEntityResource = new MyEntityResource(myEntityDao);
     environment.jersey().register(myEntityResource);
 }
 ```
+
+## Benefits of TableDefinition Approach
+
+### ✅ Eliminates Boilerplate
+- No need to write INSERT and UPDATE SQL manually
+- No need to manually bind parameters
+- Automatically handles all columns
+
+### ✅ Type Safety
+- Compile-time checking of getters/setters
+- Type-safe column definitions
+- Prevents typos in column names
+
+### ✅ Maintainability
+- Add a column? Just add one ColumnDefinition
+- Change a column? Update in one place
+- Clear, declarative structure
+
+### ✅ Flexibility
+- Control which columns are insertable/updatable
+- Handle timestamps automatically
+- Custom getter/setter logic per column
+
+### ✅ Consistency
+- All DAOs follow the same pattern
+- Standardized INSERT/UPDATE behavior
+- Predictable code structure
 
 ## Example: EmployeeDao
 
