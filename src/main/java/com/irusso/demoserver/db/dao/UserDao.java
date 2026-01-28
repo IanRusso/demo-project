@@ -1,5 +1,6 @@
 package com.irusso.demoserver.db.dao;
 
+import com.google.inject.Inject;
 import com.irusso.demoserver.db.model.User;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
@@ -18,6 +19,26 @@ public class UserDao extends StandardDao<User, Long> {
     private static final String TABLE_NAME = "users";
     private static final String ID_COLUMN = "id";
 
+    // Column name constants
+    private static final String COL_NAME = "name";
+    private static final String COL_EMAIL = "email";
+    private static final String COL_PHONE_NUMBER = "phone_number";
+    private static final String COL_LOCATION = "location";
+    private static final String COL_EDUCATION_LEVEL = "education_level";
+    private static final String COL_SUMMARY = "summary";
+    private static final String COL_PROFILE_PICTURE_URL = "profile_picture_url";
+    private static final String COL_EMPLOYMENT_STATUS = "employment_status";
+    private static final String COL_BACKGROUND_CHECK_STATUS = "background_check_status";
+    private static final String COL_USER_RATING = "user_rating";
+    private static final String COL_COMMUNICATION_RATING = "communication_rating";
+    private static final String COL_PROFESSIONALISM_RATING = "professionalism_rating";
+    private static final String COL_RELIABILITY_RATING = "reliability_rating";
+    private static final String COL_SALARY_EXPECTATIONS_MIN = "salary_expectations_min";
+    private static final String COL_SALARY_EXPECTATIONS_MAX = "salary_expectations_max";
+    private static final String COL_ACTIVELY_SEEKING = "actively_seeking";
+    private static final String COL_CREATED_AT = "created_at";
+    private static final String COL_UPDATED_AT = "updated_at";
+
     /**
      * Create the table definition for users.
      */
@@ -26,105 +47,105 @@ public class UserDao extends StandardDao<User, Long> {
             .tableName(TABLE_NAME)
             .idColumn(ID_COLUMN)
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("name")
+                .columnName(COL_NAME)
                 .javaType(String.class)
                 .nullable(false)
                 .getter(User::getName)
                 .setter((e, v) -> e.setName((String) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("email")
+                .columnName(COL_EMAIL)
                 .javaType(String.class)
                 .nullable(false)
                 .getter(User::getEmail)
                 .setter((e, v) -> e.setEmail((String) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("phone_number")
+                .columnName(COL_PHONE_NUMBER)
                 .javaType(String.class)
                 .nullable(true)
                 .getter(User::getPhoneNumber)
                 .setter((e, v) -> e.setPhoneNumber((String) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("location")
+                .columnName(COL_LOCATION)
                 .javaType(String.class)
                 .nullable(true)
                 .getter(User::getLocation)
                 .setter((e, v) -> e.setLocation((String) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("education_level")
+                .columnName(COL_EDUCATION_LEVEL)
                 .javaType(String.class)
                 .nullable(true)
                 .getter(User::getEducationLevel)
                 .setter((e, v) -> e.setEducationLevel((String) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("summary")
+                .columnName(COL_SUMMARY)
                 .javaType(String.class)
                 .nullable(true)
                 .getter(User::getSummary)
                 .setter((e, v) -> e.setSummary((String) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("profile_picture_url")
+                .columnName(COL_PROFILE_PICTURE_URL)
                 .javaType(String.class)
                 .nullable(true)
                 .getter(User::getProfilePictureUrl)
                 .setter((e, v) -> e.setProfilePictureUrl((String) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("employment_status")
+                .columnName(COL_EMPLOYMENT_STATUS)
                 .javaType(String.class)
                 .nullable(true)
                 .getter(User::getEmploymentStatus)
                 .setter((e, v) -> e.setEmploymentStatus((String) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("background_check_status")
+                .columnName(COL_BACKGROUND_CHECK_STATUS)
                 .javaType(String.class)
                 .nullable(true)
                 .getter(User::getBackgroundCheckStatus)
                 .setter((e, v) -> e.setBackgroundCheckStatus((String) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("user_rating")
+                .columnName(COL_USER_RATING)
                 .javaType(BigDecimal.class)
                 .nullable(true)
                 .getter(User::getUserRating)
                 .setter((e, v) -> e.setUserRating((BigDecimal) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("communication_rating")
+                .columnName(COL_COMMUNICATION_RATING)
                 .javaType(BigDecimal.class)
                 .nullable(true)
                 .getter(User::getCommunicationRating)
                 .setter((e, v) -> e.setCommunicationRating((BigDecimal) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("salary_expectations_min")
+                .columnName(COL_SALARY_EXPECTATIONS_MIN)
                 .javaType(BigDecimal.class)
                 .nullable(true)
                 .getter(User::getSalaryExpectationsMin)
                 .setter((e, v) -> e.setSalaryExpectationsMin((BigDecimal) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("salary_expectations_max")
+                .columnName(COL_SALARY_EXPECTATIONS_MAX)
                 .javaType(BigDecimal.class)
                 .nullable(true)
                 .getter(User::getSalaryExpectationsMax)
                 .setter((e, v) -> e.setSalaryExpectationsMax((BigDecimal) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("actively_seeking")
+                .columnName(COL_ACTIVELY_SEEKING)
                 .javaType(Boolean.class)
                 .nullable(true)
                 .getter(User::getActivelySeeking)
                 .setter((e, v) -> e.setActivelySeeking((Boolean) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("created_at")
+                .columnName(COL_CREATED_AT)
                 .javaType(Timestamp.class)
                 .nullable(false)
                 .insertable(true)
@@ -133,7 +154,7 @@ public class UserDao extends StandardDao<User, Long> {
                 .setter((e, v) -> e.setCreatedAt(v != null ? ((Timestamp) v).toInstant() : null))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
-                .columnName("updated_at")
+                .columnName(COL_UPDATED_AT)
                 .javaType(Timestamp.class)
                 .nullable(false)
                 .insertable(true)
@@ -183,6 +204,7 @@ public class UserDao extends StandardDao<User, Long> {
      *
      * @param jdbi The JDBI instance for database access
      */
+    @Inject
     public UserDao(Jdbi jdbi) {
         super(jdbi, createTableDefinition(), USER_MAPPER);
     }

@@ -7,7 +7,9 @@ A job site driven by reciprocal communication and transparency
    1. Enforced communication requirements
    2. Independent Employer/User history
    3. Encourage people to stay updated at their workplace?
-2. 
+2. Capture EVERYTHING
+   1. When you accomplish something at work or at home - record it
+   2. AI extracts skills from those experiences and summarizes for employers
 
 ## User Profiles
 ### Data

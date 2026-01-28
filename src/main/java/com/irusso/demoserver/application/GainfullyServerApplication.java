@@ -1,6 +1,9 @@
 package com.irusso.demoserver.application;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.irusso.demoserver.application.model.GainfullyServerConfiguration;
+import com.irusso.demoserver.application.module.DaoModule;
 import com.irusso.demoserver.resources.HealthCheckResource;
 import com.irusso.demoserver.resources.UserResource;
 import io.dropwizard.core.Application;
@@ -51,6 +54,9 @@ public class GainfullyServerApplication
         // Configure database
         final JdbiFactory factory = new JdbiFactory();
         final Jdbi jdbi = factory.build(environment, configuration.getDataSourceFactory(), "postgresql");
+
+        // Create Guice injector with DAO module
+        final Injector injector = Guice.createInjector(new DaoModule(jdbi));
 
         // Register health checks
         final HealthCheckResource healthCheck = new HealthCheckResource();
