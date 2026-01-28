@@ -45,6 +45,27 @@
             <version>3.0.2</version>
         </dependency>
 
+        <!-- Database - PostgreSQL -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.1</version>
+        </dependency>
+
+        <!-- Dropwizard JDBI3 for database access -->
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-jdbi3</artifactId>
+            <version>${dropwizard.version}</version>
+        </dependency>
+
+        <!-- Dropwizard Migrations (includes Flyway) -->
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-migrations</artifactId>
+            <version>${dropwizard.version}</version>
+        </dependency>
+
         <!-- Testing -->
         <dependency>
             <groupId>io.dropwizard</groupId>
@@ -89,7 +110,7 @@
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.irusso.demoserver.application.DemoServerApplication</mainClass>
+                                    <mainClass>com.irusso.demoserver.application.GainfullyServerApplication</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>
