@@ -1,45 +1,60 @@
 package com.irusso.demoserver.application;
 
-import com.irusso.demoserver.application.model.DemoServerConfiguration;
+import com.irusso.demoserver.application.model.GainfullyServerConfiguration;
 import com.irusso.demoserver.resources.HealthCheckResource;
 import com.irusso.demoserver.resources.UserResource;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.jdbi3.JdbiFactory;
+import io.dropwizard.migrations.MigrationsBundle;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
+import org.jdbi.v3.core.Jdbi;
 
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterRegistration;
 import java.util.EnumSet;
 
 /**
- * Main Dropwizard application class for the Demo Server.
+ * Main Dropwizard application class for the Gainfully Server.
  * This class handles the initialization and configuration of the REST API.
  */
-public class DemoServerApplication extends Application<DemoServerConfiguration> {
+public class GainfullyServerApplication
+    extends Application<GainfullyServerConfiguration> {
 
     public static void main(String[] args) throws Exception {
-        new DemoServerApplication().run(args);
+        new GainfullyServerApplication().run(args);
     }
 
     @Override
     public String getName() {
-        return "demo-server";
+        return "gainfully-server";
     }
 
     @Override
-    public void initialize(Bootstrap<DemoServerConfiguration> bootstrap) {
-        // Add any bundles or commands here
+    public void initialize(Bootstrap<GainfullyServerConfiguration> bootstrap) {
+        // Add Flyway migrations bundle
+        bootstrap.addBundle(new MigrationsBundle<>() {
+            @Override
+            public DataSourceFactory getDataSourceFactory(GainfullyServerConfiguration configuration) {
+                return configuration.getDataSourceFactory();
+            }
+        });
     }
 
     @Override
-    public void run(DemoServerConfiguration configuration, Environment environment) {
+    public void run(GainfullyServerConfiguration configuration, Environment environment) {
         // Configure CORS for both application and admin contexts
         configureCors(environment);
 
+        // Configure database
+        final JdbiFactory factory = new JdbiFactory();
+        final Jdbi jdbi = factory.build(environment, configuration.getDataSourceFactory(), "postgresql");
+
         // Register health checks
         final HealthCheckResource healthCheck = new HealthCheckResource();
-        environment.healthChecks().register("demo-server", healthCheck);
+        environment.healthChecks().register("gainfully-server", healthCheck);
 
         // Register REST resources
         final UserResource userResource = new UserResource();
