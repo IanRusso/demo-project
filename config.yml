@@ -12,15 +12,36 @@ server:
     - type: http
       port: 8081
 
+# Database configuration
+database:
+  driverClass: org.postgresql.Driver
+  user: gainfully_user
+  password: gainfully_password
+  url: jdbc:postgresql://localhost:5432/gainfully_db
+
+  # Connection pool settings
+  properties:
+    charSet: UTF-8
+
+  # Connection pool configuration
+  maxWaitForConnection: 1s
+  validationQuery: "SELECT 1"
+  validationQueryTimeout: 3s
+  minSize: 8
+  maxSize: 32
+  checkConnectionWhileIdle: true
+  evictionInterval: 10s
+  minIdleTime: 1 minute
+
 # Logging configuration
 logging:
   level: INFO
   loggers:
     com.irusso.demoserver: DEBUG
+    org.flywaydb: INFO
   appenders:
     - type: console
       threshold: ALL
       timeZone: UTC
       target: stdout
       logFormat: "%-5p [%d{ISO8601}] %c: %m%n%rEx"
-

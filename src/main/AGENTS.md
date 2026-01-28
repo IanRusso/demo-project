@@ -1,7 +1,10 @@
-Use io.dropwizard for REST API code
+io.dropwizard for REST API code
 
-Use Google's guice framework for dependency injection
+Google's guice framework for dependency injection
 
-Use sql2o and postgres for database access
+Database
+- sql20 for access
+- PostgreSQL
+- Flyway for migrations
 
-Use mockito for mocking in unit tests
+Mockito for mocking in unit tests
