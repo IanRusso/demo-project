@@ -6,7 +6,7 @@ A job site driven by reciprocal communication and transparency.
 
 ## Overview
 
-Gainfully is a full-stack job marketplace application designed to promote transparency and meaningful communication between job seekers and employers. The platform features comprehensive employee and employer profiles, detailed job postings, and a transparent application process with required communication.
+Gainfully is a full-stack job marketplace application designed to promote transparency and meaningful communication between job seekers and employers. The platform features comprehensive user and employer profiles, detailed job postings, and a transparent application process with required communication.
 
 ### Technology Stack
 
@@ -23,7 +23,7 @@ Gainfully is a full-stack job marketplace application designed to promote transp
   - Type-safe development with TypeScript
 
 - **Database**: PostgreSQL 12+
-  - 15-table schema covering employees, employers, jobs, and applications
+  - 15-table schema covering users, employers, jobs, and applications
   - Automatic schema migrations with Flyway
   - See [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md) for details
 
@@ -100,10 +100,10 @@ demo-project/
 │   ├── db/                       # Database layer
 │   │   ├── dao/                  # Data Access Objects
 │   │   │   ├── StandardDao.java  # Abstract base DAO
-│   │   │   ├── EmployeeDao.java  # Example DAO implementation
+│   │   │   ├── UserDao.java      # Example DAO implementation
 │   │   │   └── README.md         # DAO documentation
 │   │   └── model/                # Database entity models
-│   │       └── Employee.java     # Example entity
+│   │       └── User.java         # Example entity
 │   ├── resources/                # REST API endpoints
 │   │   ├── UserResource.java
 │   │   └── HealthCheckResource.java
@@ -298,12 +298,12 @@ React Components → API Client → Backend REST API
 
 The application uses a comprehensive 15-table schema:
 
-**Employee Tables:**
-- `employees` - Core employee profiles
-- `employee_skills` - Skills with proficiency levels
-- `employee_fields_of_interest` - Industry preferences
-- `employee_geographical_interests` - Location preferences
-- `employee_job_type_interests` - Job type preferences
+**User Tables:**
+- `users` - Core user profiles
+- `user_skills` - Skills with proficiency levels
+- `user_fields_of_interest` - Industry preferences
+- `user_geographical_interests` - Location preferences
+- `user_job_type_interests` - Job type preferences
 - `employment_history` - Work history
 
 **Employer Tables:**
@@ -313,7 +313,7 @@ The application uses a comprehensive 15-table schema:
 **Job Posting Tables:**
 - `job_postings` - Job listings
 - `job_requirements` - Requirements (hard/soft/preference)
-- `saved_jobs` - Employee saved jobs
+- `saved_jobs` - User saved jobs
 
 **Application Tables:**
 - `applications` - Job applications with status tracking

@@ -218,7 +218,7 @@ psql -U gainfully_user -d gainfully_db -h localhost
 \dt
 
 # Describe a specific table
-\d employees
+\d users
 
 # View all columns in a table
 \d+ job_postings
@@ -228,11 +228,11 @@ psql -U gainfully_user -d gainfully_db -h localhost
 ```
 
 You should see 15 tables:
-- employees
-- employee_skills
-- employee_fields_of_interest
-- employee_geographical_interests
-- employee_job_type_interests
+- users
+- user_skills
+- user_fields_of_interest
+- user_geographical_interests
+- user_job_type_interests
 - employment_history
 - employers
 - employer_history

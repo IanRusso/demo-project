@@ -223,9 +223,9 @@ public void run(GainfullyServerConfiguration configuration, Environment environm
 - Standardized INSERT/UPDATE behavior
 - Predictable code structure
 
-## Example: EmployeeDao
+## Example: UserDao
 
-See `EmployeeDao.java` for a complete example implementation with:
+See `UserDao.java` for a complete example implementation with:
 
 - Standard CRUD operations
 - Custom query methods (`findByEmail`, `findActivelySeeking`, `findByLocation`)
@@ -236,56 +236,56 @@ See `EmployeeDao.java` for a complete example implementation with:
 Use DAOs in your REST resources:
 
 ```java
-@Path("/api/employees")
+@Path("/api/users")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class EmployeeResource {
+public class UserResource {
     
-    private final EmployeeDao employeeDao;
+    private final UserDao userDao;
     
-    public EmployeeResource(EmployeeDao employeeDao) {
-        this.employeeDao = employeeDao;
+    public UserResource(UserDao userDao) {
+        this.userDao = userDao;
     }
     
     @GET
-    public Response getAllEmployees() {
-        List<Employee> employees = employeeDao.findAll();
-        return Response.ok(employees).build();
+    public Response getAllUsers() {
+        List<User> users = userDao.findAll();
+        return Response.ok(users).build();
     }
     
     @GET
     @Path("/{id}")
-    public Response getEmployee(@PathParam("id") Long id) {
-        Optional<Employee> employee = employeeDao.findById(id);
-        if (employee.isEmpty()) {
+    public Response getUser(@PathParam("id") Long id) {
+        Optional<User> user = userDao.findById(id);
+        if (user.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        return Response.ok(employee.get()).build();
+        return Response.ok(user.get()).build();
     }
     
     @POST
-    public Response createEmployee(@Valid Employee employee) {
-        Long id = employeeDao.insert(employee);
-        employee.setId(id);
+    public Response createUser(@Valid User user) {
+        Long id = userDao.insert(user);
+        user.setId(id);
         return Response.status(Response.Status.CREATED)
-            .entity(employee)
+            .entity(user)
             .build();
     }
     
     @PUT
     @Path("/{id}")
-    public Response updateEmployee(@PathParam("id") Long id, @Valid Employee employee) {
-        if (!employeeDao.exists(id)) {
+    public Response updateUser(@PathParam("id") Long id, @Valid User user) {
+        if (!userDao.exists(id)) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
-        employeeDao.update(id, employee);
-        return Response.ok(employee).build();
+        userDao.update(id, user);
+        return Response.ok(user).build();
     }
     
     @DELETE
     @Path("/{id}")
-    public Response deleteEmployee(@PathParam("id") Long id) {
-        boolean deleted = employeeDao.delete(id);
+    public Response deleteUser(@PathParam("id") Long id) {
+        boolean deleted = userDao.delete(id);
         if (!deleted) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -302,7 +302,7 @@ Java 15+ text blocks make SQL more readable:
 
 ```java
 String sql = """
-    SELECT * FROM employees 
+    SELECT * FROM users 
     WHERE location = :location 
     AND actively_seeking = true
     ORDER BY updated_at DESC
@@ -330,7 +330,7 @@ PostgreSQL's `RETURNING` clause gets the generated ID:
 
 ```java
 String sql = """
-    INSERT INTO employees (name, email) 
+    INSERT INTO users (name, email) 
     VALUES (:name, :email) 
     RETURNING id
     """;
@@ -349,13 +349,13 @@ return jdbi.withHandle(handle ->
 Extend StandardDao with domain-specific queries:
 
 ```java
-public List<Employee> findActivelySeeking() {
-    String sql = "SELECT * FROM employees WHERE actively_seeking = true";
+public List<User> findActivelySeeking() {
+    String sql = "SELECT * FROM users WHERE actively_seeking = true";
     return executeQuery(sql);
 }
 
-public List<Employee> findByLocation(String location) {
-    String sql = "SELECT * FROM employees WHERE location ILIKE :location";
+public List<User> findByLocation(String location) {
+    String sql = "SELECT * FROM users WHERE location ILIKE :location";
     return executeQuery(sql, "location", "%" + location + "%");
 }
 ```
@@ -381,15 +381,15 @@ Example unit test for a DAO:
 ```java
 @Test
 public void testInsertAndFindById() {
-    Employee employee = new Employee();
-    employee.setName("John Doe");
-    employee.setEmail("john@example.com");
-    employee.setActivelySeeking(true);
+    User user = new User();
+    user.setName("John Doe");
+    user.setEmail("john@example.com");
+    user.setActivelySeeking(true);
     
-    Long id = employeeDao.insert(employee);
+    Long id = userDao.insert(user);
     assertNotNull(id);
     
-    Optional<Employee> found = employeeDao.findById(id);
+    Optional<User> found = userDao.findById(id);
     assertTrue(found.isPresent());
     assertEquals("John Doe", found.get().getName());
     assertEquals("john@example.com", found.get().getEmail());
@@ -406,15 +406,15 @@ int page = 2;
 int pageSize = 20;
 int offset = (page - 1) * pageSize;
 
-List<Employee> employees = employeeDao.findAll(pageSize, offset);
-long total = employeeDao.count();
+List<User> users = userDao.findAll(pageSize, offset);
+long total = userDao.count();
 ```
 
 ### Search with Multiple Criteria
 
 ```java
-public List<Employee> search(String location, Boolean activelySeeking, Double minRating) {
-    StringBuilder sql = new StringBuilder("SELECT * FROM employees WHERE 1=1");
+public List<User> search(String location, Boolean activelySeeking, Double minRating) {
+    StringBuilder sql = new StringBuilder("SELECT * FROM users WHERE 1=1");
     
     if (location != null) {
         sql.append(" AND location ILIKE :location");
@@ -423,11 +423,11 @@ public List<Employee> search(String location, Boolean activelySeeking, Double mi
         sql.append(" AND actively_seeking = :activelySeeking");
     }
     if (minRating != null) {
-        sql.append(" AND employee_rating >= :minRating");
+        sql.append(" AND user_rating >= :minRating");
     }
     
     return jdbi.withHandle(handle -> {
-        var query = handle.createQuery(sql.toString()).map(EMPLOYEE_MAPPER);
+        var query = handle.createQuery(sql.toString()).map(USER_MAPPER);
         
         if (location != null) query.bind("location", "%" + location + "%");
         if (activelySeeking != null) query.bind("activelySeeking", activelySeeking);

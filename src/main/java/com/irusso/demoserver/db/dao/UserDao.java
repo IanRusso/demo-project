@@ -1,6 +1,6 @@
 package com.irusso.demoserver.db.dao;
 
-import com.irusso.demoserver.db.model.Employee;
+import com.irusso.demoserver.db.model.User;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 
@@ -10,120 +10,120 @@ import java.time.Instant;
 import java.util.List;
 
 /**
- * Data Access Object for the employees table.
- * Provides CRUD operations and custom queries for Employee entities.
+ * Data Access Object for the users table.
+ * Provides CRUD operations and custom queries for User entities.
  */
-public class EmployeeDao extends StandardDao<Employee, Long> {
+public class UserDao extends StandardDao<User, Long> {
 
-    private static final String TABLE_NAME = "employees";
+    private static final String TABLE_NAME = "users";
     private static final String ID_COLUMN = "id";
 
     /**
-     * Create the table definition for employees.
+     * Create the table definition for users.
      */
-    private static TableDefinition<Employee> createTableDefinition() {
-        return TableDefinition.<Employee>builder()
+    private static TableDefinition<User> createTableDefinition() {
+        return TableDefinition.<User>builder()
             .tableName(TABLE_NAME)
             .idColumn(ID_COLUMN)
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("name")
                 .javaType(String.class)
                 .nullable(false)
-                .getter(Employee::getName)
+                .getter(User::getName)
                 .setter((e, v) -> e.setName((String) v))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("email")
                 .javaType(String.class)
                 .nullable(false)
-                .getter(Employee::getEmail)
+                .getter(User::getEmail)
                 .setter((e, v) -> e.setEmail((String) v))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("phone_number")
                 .javaType(String.class)
                 .nullable(true)
-                .getter(Employee::getPhoneNumber)
+                .getter(User::getPhoneNumber)
                 .setter((e, v) -> e.setPhoneNumber((String) v))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("location")
                 .javaType(String.class)
                 .nullable(true)
-                .getter(Employee::getLocation)
+                .getter(User::getLocation)
                 .setter((e, v) -> e.setLocation((String) v))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("education_level")
                 .javaType(String.class)
                 .nullable(true)
-                .getter(Employee::getEducationLevel)
+                .getter(User::getEducationLevel)
                 .setter((e, v) -> e.setEducationLevel((String) v))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("summary")
                 .javaType(String.class)
                 .nullable(true)
-                .getter(Employee::getSummary)
+                .getter(User::getSummary)
                 .setter((e, v) -> e.setSummary((String) v))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("profile_picture_url")
                 .javaType(String.class)
                 .nullable(true)
-                .getter(Employee::getProfilePictureUrl)
+                .getter(User::getProfilePictureUrl)
                 .setter((e, v) -> e.setProfilePictureUrl((String) v))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("employment_status")
                 .javaType(String.class)
                 .nullable(true)
-                .getter(Employee::getEmploymentStatus)
+                .getter(User::getEmploymentStatus)
                 .setter((e, v) -> e.setEmploymentStatus((String) v))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("background_check_status")
                 .javaType(String.class)
                 .nullable(true)
-                .getter(Employee::getBackgroundCheckStatus)
+                .getter(User::getBackgroundCheckStatus)
                 .setter((e, v) -> e.setBackgroundCheckStatus((String) v))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
-                .columnName("employee_rating")
+            .addColumn(ColumnDefinition.<User>builder()
+                .columnName("user_rating")
                 .javaType(BigDecimal.class)
                 .nullable(true)
-                .getter(Employee::getEmployeeRating)
-                .setter((e, v) -> e.setEmployeeRating((BigDecimal) v))
+                .getter(User::getUserRating)
+                .setter((e, v) -> e.setUserRating((BigDecimal) v))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("communication_rating")
                 .javaType(BigDecimal.class)
                 .nullable(true)
-                .getter(Employee::getCommunicationRating)
+                .getter(User::getCommunicationRating)
                 .setter((e, v) -> e.setCommunicationRating((BigDecimal) v))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("salary_expectations_min")
                 .javaType(BigDecimal.class)
                 .nullable(true)
-                .getter(Employee::getSalaryExpectationsMin)
+                .getter(User::getSalaryExpectationsMin)
                 .setter((e, v) -> e.setSalaryExpectationsMin((BigDecimal) v))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("salary_expectations_max")
                 .javaType(BigDecimal.class)
                 .nullable(true)
-                .getter(Employee::getSalaryExpectationsMax)
+                .getter(User::getSalaryExpectationsMax)
                 .setter((e, v) -> e.setSalaryExpectationsMax((BigDecimal) v))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("actively_seeking")
                 .javaType(Boolean.class)
                 .nullable(true)
-                .getter(Employee::getActivelySeeking)
+                .getter(User::getActivelySeeking)
                 .setter((e, v) -> e.setActivelySeeking((Boolean) v))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("created_at")
                 .javaType(Timestamp.class)
                 .nullable(false)
@@ -132,7 +132,7 @@ public class EmployeeDao extends StandardDao<Employee, Long> {
                 .getter(e -> e.getCreatedAt() != null ? Timestamp.from(e.getCreatedAt()) : Timestamp.from(Instant.now()))
                 .setter((e, v) -> e.setCreatedAt(v != null ? ((Timestamp) v).toInstant() : null))
                 .build())
-            .addColumn(ColumnDefinition.<Employee>builder()
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName("updated_at")
                 .javaType(Timestamp.class)
                 .nullable(false)
@@ -145,110 +145,110 @@ public class EmployeeDao extends StandardDao<Employee, Long> {
     }
 
     /**
-     * RowMapper to convert database rows to Employee objects.
+     * RowMapper to convert database rows to User objects.
      */
-    private static final RowMapper<Employee> EMPLOYEE_MAPPER = (rs, ctx) -> {
-        Employee employee = new Employee();
-        employee.setId(rs.getLong("id"));
-        employee.setName(rs.getString("name"));
-        employee.setEmail(rs.getString("email"));
-        employee.setPhoneNumber(rs.getString("phone_number"));
-        employee.setLocation(rs.getString("location"));
-        employee.setEducationLevel(rs.getString("education_level"));
-        employee.setSummary(rs.getString("summary"));
-        employee.setProfilePictureUrl(rs.getString("profile_picture_url"));
-        employee.setEmploymentStatus(rs.getString("employment_status"));
-        employee.setBackgroundCheckStatus(rs.getString("background_check_status"));
-        employee.setEmployeeRating(rs.getBigDecimal("employee_rating"));
-        employee.setCommunicationRating(rs.getBigDecimal("communication_rating"));
-        employee.setSalaryExpectationsMin(rs.getBigDecimal("salary_expectations_min"));
-        employee.setSalaryExpectationsMax(rs.getBigDecimal("salary_expectations_max"));
-        employee.setActivelySeeking(rs.getBoolean("actively_seeking"));
+    private static final RowMapper<User> USER_MAPPER = (rs, ctx) -> {
+        User user = new User();
+        user.setId(rs.getLong("id"));
+        user.setName(rs.getString("name"));
+        user.setEmail(rs.getString("email"));
+        user.setPhoneNumber(rs.getString("phone_number"));
+        user.setLocation(rs.getString("location"));
+        user.setEducationLevel(rs.getString("education_level"));
+        user.setSummary(rs.getString("summary"));
+        user.setProfilePictureUrl(rs.getString("profile_picture_url"));
+        user.setEmploymentStatus(rs.getString("employment_status"));
+        user.setBackgroundCheckStatus(rs.getString("background_check_status"));
+        user.setUserRating(rs.getBigDecimal("user_rating"));
+        user.setCommunicationRating(rs.getBigDecimal("communication_rating"));
+        user.setSalaryExpectationsMin(rs.getBigDecimal("salary_expectations_min"));
+        user.setSalaryExpectationsMax(rs.getBigDecimal("salary_expectations_max"));
+        user.setActivelySeeking(rs.getBoolean("actively_seeking"));
 
         Timestamp createdAt = rs.getTimestamp("created_at");
         if (createdAt != null) {
-            employee.setCreatedAt(createdAt.toInstant());
+            user.setCreatedAt(createdAt.toInstant());
         }
 
         Timestamp updatedAt = rs.getTimestamp("updated_at");
         if (updatedAt != null) {
-            employee.setUpdatedAt(updatedAt.toInstant());
+            user.setUpdatedAt(updatedAt.toInstant());
         }
 
-        return employee;
+        return user;
     };
 
     /**
-     * Constructor for EmployeeDao.
+     * Constructor for UserDao.
      *
      * @param jdbi The JDBI instance for database access
      */
-    public EmployeeDao(Jdbi jdbi) {
-        super(jdbi, createTableDefinition(), EMPLOYEE_MAPPER);
+    public UserDao(Jdbi jdbi) {
+        super(jdbi, createTableDefinition(), USER_MAPPER);
     }
 
 
 
     /**
-     * Find employees by email address.
-     * 
+     * Find users by email address.
+     *
      * @param email The email address to search for
-     * @return List of employees with matching email (should be 0 or 1 due to unique constraint)
+     * @return List of users with matching email (should be 0 or 1 due to unique constraint)
      */
-    public List<Employee> findByEmail(String email) {
-        String sql = "SELECT * FROM employees WHERE email = :email";
+    public List<User> findByEmail(String email) {
+        String sql = "SELECT * FROM users WHERE email = :email";
         return executeQuery(sql, "email", email);
     }
 
     /**
-     * Find employees who are actively seeking employment.
-     * 
-     * @return List of employees actively seeking jobs
+     * Find users who are actively seeking employment.
+     *
+     * @return List of users actively seeking jobs
      */
-    public List<Employee> findActivelySeeking() {
-        String sql = "SELECT * FROM employees WHERE actively_seeking = true ORDER BY updated_at DESC";
+    public List<User> findActivelySeeking() {
+        String sql = "SELECT * FROM users WHERE actively_seeking = true ORDER BY updated_at DESC";
         return executeQuery(sql);
     }
 
     /**
-     * Find employees by location.
-     * 
+     * Find users by location.
+     *
      * @param location The location to search for
-     * @return List of employees in the specified location
+     * @return List of users in the specified location
      */
-    public List<Employee> findByLocation(String location) {
-        String sql = "SELECT * FROM employees WHERE location ILIKE :location ORDER BY name";
+    public List<User> findByLocation(String location) {
+        String sql = "SELECT * FROM users WHERE location ILIKE :location ORDER BY name";
         return executeQuery(sql, "location", "%" + location + "%");
     }
 
     /**
-     * Find employees with a minimum rating.
-     * 
-     * @param minRating The minimum employee rating
-     * @return List of employees with rating >= minRating
+     * Find users with a minimum rating.
+     *
+     * @param minRating The minimum user rating
+     * @return List of users with rating >= minRating
      */
-    public List<Employee> findByMinimumRating(double minRating) {
-        String sql = "SELECT * FROM employees WHERE employee_rating >= :minRating ORDER BY employee_rating DESC";
+    public List<User> findByMinimumRating(double minRating) {
+        String sql = "SELECT * FROM users WHERE user_rating >= :minRating ORDER BY user_rating DESC";
         return executeQuery(sql, "minRating", minRating);
     }
 
     /**
-     * Update employee rating.
-     * 
-     * @param id The employee ID
+     * Update user rating.
+     *
+     * @param id The user ID
      * @param rating The new rating (0-5)
      * @return true if update was successful
      */
     public boolean updateRating(Long id, double rating) {
         String sql = """
-            UPDATE employees 
-            SET employee_rating = :rating, updated_at = :updatedAt 
+            UPDATE users
+            SET user_rating = :rating, updated_at = :updatedAt
             WHERE id = :id
             """;
-        
-        int rowsAffected = executeUpdate(sql, 
-            "id", id, 
-            "rating", rating, 
+
+        int rowsAffected = executeUpdate(sql,
+            "id", id,
+            "rating", rating,
             "updatedAt", Timestamp.from(Instant.now())
         );
         return rowsAffected > 0;
@@ -256,21 +256,21 @@ public class EmployeeDao extends StandardDao<Employee, Long> {
 
     /**
      * Update communication rating.
-     * 
-     * @param id The employee ID
+     *
+     * @param id The user ID
      * @param rating The new communication rating (0-5)
      * @return true if update was successful
      */
     public boolean updateCommunicationRating(Long id, double rating) {
         String sql = """
-            UPDATE employees 
-            SET communication_rating = :rating, updated_at = :updatedAt 
+            UPDATE users
+            SET communication_rating = :rating, updated_at = :updatedAt
             WHERE id = :id
             """;
-        
-        int rowsAffected = executeUpdate(sql, 
-            "id", id, 
-            "rating", rating, 
+
+        int rowsAffected = executeUpdate(sql,
+            "id", id,
+            "rating", rating,
             "updatedAt", Timestamp.from(Instant.now())
         );
         return rowsAffected > 0;

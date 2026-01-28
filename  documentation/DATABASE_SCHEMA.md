@@ -4,36 +4,36 @@ This document describes the PostgreSQL database schema for the Gainfully job sit
 
 ## Overview
 
-The schema is designed to support a transparent, reciprocal job marketplace with comprehensive tracking of employees, employers, job postings, and applications.
+The schema is designed to support a transparent, reciprocal job marketplace with comprehensive tracking of users, employers, job postings, and applications.
 
 ## Tables
 
-### Employee-Related Tables
+### User-Related Tables
 
-#### `employees`
-Core employee profile information.
+#### `users`
+Core user profile information.
 
 **Key Fields:**
 - Personal info: name, email, phone, location
 - Professional: education_level, summary, employment_status
-- Ratings: employee_rating, communication_rating (0-5 scale)
+- Ratings: user_rating, communication_rating (0-5 scale)
 - Job search: salary_expectations, actively_seeking
 - Verification: background_check_status
 
-#### `employee_skills`
-Skills associated with employees, including proficiency levels and years of experience.
+#### `user_skills`
+Skills associated with users, including proficiency levels and years of experience.
 
-#### `employee_fields_of_interest`
-Fields/industries the employee is interested in, with optional hard requirement flag.
+#### `user_fields_of_interest`
+Fields/industries the user is interested in, with optional hard requirement flag.
 
-#### `employee_geographical_interests`
-Locations where the employee is willing to work, with optional hard requirement flag.
+#### `user_geographical_interests`
+Locations where the user is willing to work, with optional hard requirement flag.
 
-#### `employee_job_type_interests`
-Types of jobs the employee is interested in (full-time, part-time, contract, etc.), with optional hard requirement flag.
+#### `user_job_type_interests`
+Types of jobs the user is interested in (full-time, part-time, contract, etc.), with optional hard requirement flag.
 
 #### `employment_history`
-Past and current employment records for employees.
+Past and current employment records for users.
 
 ### Employer-Related Tables
 
@@ -75,12 +75,12 @@ Requirements for each job posting, categorized by type.
 - SKILL, EDUCATION, EXPERIENCE, etc.
 
 #### `saved_jobs`
-Jobs saved by employees for later review.
+Jobs saved by users for later review.
 
 ### Application Tables
 
 #### `applications`
-Job applications submitted by employees.
+Job applications submitted by users.
 
 **Status Flow:**
 1. `SUBMITTED` - Initial application
@@ -92,10 +92,10 @@ Job applications submitted by employees.
 **Key Features:**
 - Required cover_letter
 - response_deadline for guaranteed response times
-- Unique constraint: one application per employee per job
+- Unique constraint: one application per user per job
 
 #### `application_messages`
-Communication between employees and employers regarding applications.
+Communication between users and employers regarding applications.
 
 **Message Types:**
 - `MESSAGE` - General communication
@@ -103,19 +103,19 @@ Communication between employees and employers regarding applications.
 - `REJECTION_JUSTIFICATION` - Required explanation for rejections
 
 **Sender Types:**
-- `EMPLOYEE`
+- `USER`
 - `EMPLOYER`
 
 ## Key Design Decisions
 
 ### Transparency & Communication
-- **Ratings**: Both employees and employers have rating and communication_rating fields
+- **Ratings**: Both users and employers have rating and communication_rating fields
 - **Required Justification**: Rejection messages must be provided (enforced at application level)
 - **Message Tracking**: All communications are logged with timestamps and read receipts
 - **History Tracking**: Both employment history and employer hiring/layoff history are maintained
 
 ### Flexibility
-- **Preferences**: Employees can mark preferences as hard requirements
+- **Preferences**: Users can mark preferences as hard requirements
 - **Requirements**: Jobs can have HARD, SOFT, and PREFERENCE requirements
 - **Multi-valued Attributes**: Skills, interests, and requirements are in separate tables for flexibility
 
@@ -168,5 +168,5 @@ To apply the migration:
 - **Indexes**: Prefixed with `idx_` followed by table and column(s)
 - **Constraints**: Prefixed with `chk_` for check constraints
 - **Primary Keys**: `id` (BIGSERIAL)
-- **Foreign Keys**: `{table}_id` (e.g., `employee_id`)
+- **Foreign Keys**: `{table}_id` (e.g., `user_id`)
 

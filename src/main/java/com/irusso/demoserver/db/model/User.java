@@ -6,9 +6,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 /**
- * Employee entity representing a row in the employees table.
+ * User entity representing a row in the users table.
  */
-public class Employee {
+public class User {
 
     private Long id;
     private String name;
@@ -20,7 +20,7 @@ public class Employee {
     private String profilePictureUrl;
     private String employmentStatus;
     private String backgroundCheckStatus;
-    private BigDecimal employeeRating;
+    private BigDecimal userRating;
     private BigDecimal communicationRating;
     private BigDecimal salaryExpectationsMin;
     private BigDecimal salaryExpectationsMax;
@@ -28,7 +28,7 @@ public class Employee {
     private Instant createdAt;
     private Instant updatedAt;
 
-    public Employee() {
+    public User() {
         // Default constructor for JDBI
     }
 
@@ -133,13 +133,13 @@ public class Employee {
     }
 
     @JsonProperty
-    public BigDecimal getEmployeeRating() {
-        return employeeRating;
+    public BigDecimal getUserRating() {
+        return userRating;
     }
 
     @JsonProperty
-    public void setEmployeeRating(BigDecimal employeeRating) {
-        this.employeeRating = employeeRating;
+    public void setUserRating(BigDecimal userRating) {
+        this.userRating = userRating;
     }
 
     @JsonProperty

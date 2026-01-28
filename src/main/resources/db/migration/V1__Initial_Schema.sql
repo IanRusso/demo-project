@@ -1,11 +1,11 @@
 -- Gainfully Job Site - Initial Database Schema
--- This migration creates the core tables for employees, employers, job postings, and applications
+-- This migration creates the core tables for users, employers, job postings, and applications
 
 -- ============================================
--- EMPLOYEE PROFILES
+-- USER PROFILES
 -- ============================================
 
-CREATE TABLE employees (
+CREATE TABLE users (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -16,82 +16,82 @@ CREATE TABLE employees (
     profile_picture_url VARCHAR(500),
     employment_status VARCHAR(50),
     background_check_status VARCHAR(50),
-    employee_rating DECIMAL(3,2) DEFAULT 0.00,
+    user_rating DECIMAL(3,2) DEFAULT 0.00,
     communication_rating DECIMAL(3,2) DEFAULT 0.00,
     salary_expectations_min DECIMAL(12,2),
     salary_expectations_max DECIMAL(12,2),
     actively_seeking BOOLEAN DEFAULT false,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_employee_rating CHECK (employee_rating >= 0 AND employee_rating <= 5),
+    CONSTRAINT chk_user_rating CHECK (user_rating >= 0 AND user_rating <= 5),
     CONSTRAINT chk_communication_rating CHECK (communication_rating >= 0 AND communication_rating <= 5)
 );
 
-CREATE INDEX idx_employees_email ON employees(email);
-CREATE INDEX idx_employees_actively_seeking ON employees(actively_seeking);
-CREATE INDEX idx_employees_location ON employees(location);
+CREATE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_actively_seeking ON users(actively_seeking);
+CREATE INDEX idx_users_location ON users(location);
 
 -- ============================================
--- EMPLOYEE SKILLS
+-- USER SKILLS
 -- ============================================
 
-CREATE TABLE employee_skills (
+CREATE TABLE user_skills (
     id BIGSERIAL PRIMARY KEY,
-    employee_id BIGINT NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     skill_name VARCHAR(100) NOT NULL,
     proficiency_level VARCHAR(50),
     years_of_experience INTEGER,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(employee_id, skill_name)
+    UNIQUE(user_id, skill_name)
 );
 
-CREATE INDEX idx_employee_skills_employee_id ON employee_skills(employee_id);
-CREATE INDEX idx_employee_skills_skill_name ON employee_skills(skill_name);
+CREATE INDEX idx_user_skills_user_id ON user_skills(user_id);
+CREATE INDEX idx_user_skills_skill_name ON user_skills(skill_name);
 
 -- ============================================
--- EMPLOYEE FIELDS OF INTEREST
+-- USER FIELDS OF INTEREST
 -- ============================================
 
-CREATE TABLE employee_fields_of_interest (
+CREATE TABLE user_fields_of_interest (
     id BIGSERIAL PRIMARY KEY,
-    employee_id BIGINT NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     field_name VARCHAR(100) NOT NULL,
     is_hard_requirement BOOLEAN DEFAULT false,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(employee_id, field_name)
+    UNIQUE(user_id, field_name)
 );
 
-CREATE INDEX idx_employee_fields_employee_id ON employee_fields_of_interest(employee_id);
+CREATE INDEX idx_user_fields_user_id ON user_fields_of_interest(user_id);
 
 -- ============================================
--- EMPLOYEE GEOGRAPHICAL AREAS OF INTEREST
+-- USER GEOGRAPHICAL AREAS OF INTEREST
 -- ============================================
 
-CREATE TABLE employee_geographical_interests (
+CREATE TABLE user_geographical_interests (
     id BIGSERIAL PRIMARY KEY,
-    employee_id BIGINT NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     location VARCHAR(255) NOT NULL,
     is_hard_requirement BOOLEAN DEFAULT false,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(employee_id, location)
+    UNIQUE(user_id, location)
 );
 
-CREATE INDEX idx_employee_geo_employee_id ON employee_geographical_interests(employee_id);
+CREATE INDEX idx_user_geo_user_id ON user_geographical_interests(user_id);
 
 -- ============================================
--- EMPLOYEE JOB TYPE INTERESTS
+-- USER JOB TYPE INTERESTS
 -- ============================================
 
-CREATE TABLE employee_job_type_interests (
+CREATE TABLE user_job_type_interests (
     id BIGSERIAL PRIMARY KEY,
-    employee_id BIGINT NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     job_type VARCHAR(100) NOT NULL,
     is_hard_requirement BOOLEAN DEFAULT false,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(employee_id, job_type)
+    UNIQUE(user_id, job_type)
 );
 
-CREATE INDEX idx_employee_job_type_employee_id ON employee_job_type_interests(employee_id);
+CREATE INDEX idx_user_job_type_user_id ON user_job_type_interests(user_id);
 
 -- ============================================
 -- EMPLOYMENT HISTORY
@@ -99,7 +99,7 @@ CREATE INDEX idx_employee_job_type_employee_id ON employee_job_type_interests(em
 
 CREATE TABLE employment_history (
     id BIGSERIAL PRIMARY KEY,
-    employee_id BIGINT NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     employer_name VARCHAR(255) NOT NULL,
     job_title VARCHAR(255) NOT NULL,
     location VARCHAR(255),
@@ -111,7 +111,7 @@ CREATE TABLE employment_history (
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_employment_history_employee_id ON employment_history(employee_id);
+CREATE INDEX idx_employment_history_user_id ON employment_history(user_id);
 CREATE INDEX idx_employment_history_is_current ON employment_history(is_current);
 
 -- ============================================
@@ -211,14 +211,14 @@ CREATE INDEX idx_job_requirements_type ON job_requirements(requirement_type);
 
 CREATE TABLE saved_jobs (
     id BIGSERIAL PRIMARY KEY,
-    employee_id BIGINT NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     job_posting_id BIGINT NOT NULL REFERENCES job_postings(id) ON DELETE CASCADE,
     saved_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     notes TEXT,
-    UNIQUE(employee_id, job_posting_id)
+    UNIQUE(user_id, job_posting_id)
 );
 
-CREATE INDEX idx_saved_jobs_employee_id ON saved_jobs(employee_id);
+CREATE INDEX idx_saved_jobs_user_id ON saved_jobs(user_id);
 CREATE INDEX idx_saved_jobs_job_posting_id ON saved_jobs(job_posting_id);
 
 -- ============================================
@@ -227,7 +227,7 @@ CREATE INDEX idx_saved_jobs_job_posting_id ON saved_jobs(job_posting_id);
 
 CREATE TABLE applications (
     id BIGSERIAL PRIMARY KEY,
-    employee_id BIGINT NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+    user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     job_posting_id BIGINT NOT NULL REFERENCES job_postings(id) ON DELETE CASCADE,
     cover_letter TEXT NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'SUBMITTED', -- 'SUBMITTED', 'UNDER_REVIEW', 'INTERVIEW', 'ACCEPTED', 'REJECTED'
@@ -236,11 +236,11 @@ CREATE TABLE applications (
     response_deadline TIMESTAMP,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(employee_id, job_posting_id),
+    UNIQUE(user_id, job_posting_id),
     CONSTRAINT chk_application_status CHECK (status IN ('SUBMITTED', 'UNDER_REVIEW', 'INTERVIEW', 'ACCEPTED', 'REJECTED'))
 );
 
-CREATE INDEX idx_applications_employee_id ON applications(employee_id);
+CREATE INDEX idx_applications_user_id ON applications(user_id);
 CREATE INDEX idx_applications_job_posting_id ON applications(job_posting_id);
 CREATE INDEX idx_applications_status ON applications(status);
 CREATE INDEX idx_applications_applied_at ON applications(applied_at);
@@ -252,12 +252,12 @@ CREATE INDEX idx_applications_applied_at ON applications(applied_at);
 CREATE TABLE application_messages (
     id BIGSERIAL PRIMARY KEY,
     application_id BIGINT NOT NULL REFERENCES applications(id) ON DELETE CASCADE,
-    sender_type VARCHAR(50) NOT NULL, -- 'EMPLOYEE' or 'EMPLOYER'
+    sender_type VARCHAR(50) NOT NULL, -- 'USER' or 'EMPLOYER'
     message_type VARCHAR(50) NOT NULL, -- 'MESSAGE', 'STATUS_UPDATE', 'REJECTION_JUSTIFICATION'
     message_text TEXT NOT NULL,
     sent_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     read_at TIMESTAMP,
-    CONSTRAINT chk_sender_type CHECK (sender_type IN ('EMPLOYEE', 'EMPLOYER')),
+    CONSTRAINT chk_sender_type CHECK (sender_type IN ('USER', 'EMPLOYER')),
     CONSTRAINT chk_message_type CHECK (message_type IN ('MESSAGE', 'STATUS_UPDATE', 'REJECTION_JUSTIFICATION'))
 );
 

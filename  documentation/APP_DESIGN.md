@@ -3,13 +3,13 @@
 A job site driven by reciprocal communication and transparency
 
 ### Objectives
-1. Transparency on both sides - benefits employer's markets and employee's markets
+1. Transparency on both sides - benefits employer's markets and user's markets
    1. Enforced communication requirements
-   2. Independent Employer/Employee history
+   2. Independent Employer/User history
    3. Encourage people to stay updated at their workplace?
 2. 
 
-## Employee Profiles
+## User Profiles
 ### Data
 - Name
 - Email
@@ -22,7 +22,7 @@ A job site driven by reciprocal communication and transparency
 - Employment Status
 - Employment History
 - Background Check
-- Employee Rating
+- User Rating
 - Communication Rating (warnings/etc.)
 - Fields of Interest
 - Geographical Areas of Interest
