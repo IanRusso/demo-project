@@ -4,8 +4,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.irusso.demoserver.application.model.GainfullyServerConfiguration;
 import com.irusso.demoserver.application.module.DaoModule;
-import com.irusso.demoserver.resources.HealthCheckResource;
-import com.irusso.demoserver.resources.UserResource;
+import com.irusso.demoserver.application.module.ServiceModule;
+import com.irusso.demoserver.resources.*;
 import io.dropwizard.core.Application;
 import io.dropwizard.core.setup.Bootstrap;
 import io.dropwizard.core.setup.Environment;
@@ -55,16 +55,27 @@ public class GainfullyServerApplication
         final JdbiFactory factory = new JdbiFactory();
         final Jdbi jdbi = factory.build(environment, configuration.getDataSourceFactory(), "postgresql");
 
-        // Create Guice injector with DAO module
-        final Injector injector = Guice.createInjector(new DaoModule(jdbi));
+        // Create Guice injector with DAO and Service modules
+        final Injector injector = Guice.createInjector(new DaoModule(jdbi), new ServiceModule());
 
         // Register health checks
         final HealthCheckResource healthCheck = new HealthCheckResource();
         environment.healthChecks().register("gainfully-server", healthCheck);
 
-        // Register REST resources
-        final UserResource userResource = new UserResource();
-        environment.jersey().register(userResource);
+        // Register REST resources using Guice injection
+        environment.jersey().register(injector.getInstance(UserResource.class));
+        environment.jersey().register(injector.getInstance(EmployerResource.class));
+        environment.jersey().register(injector.getInstance(JobPostingResource.class));
+        environment.jersey().register(injector.getInstance(ApplicationResource.class));
+        environment.jersey().register(injector.getInstance(UserSkillResource.class));
+        environment.jersey().register(injector.getInstance(UserFieldOfInterestResource.class));
+        environment.jersey().register(injector.getInstance(UserGeographicalInterestResource.class));
+        environment.jersey().register(injector.getInstance(UserJobTypeInterestResource.class));
+        environment.jersey().register(injector.getInstance(EmploymentHistoryResource.class));
+        environment.jersey().register(injector.getInstance(EmployerHistoryResource.class));
+        environment.jersey().register(injector.getInstance(JobRequirementResource.class));
+        environment.jersey().register(injector.getInstance(SavedJobResource.class));
+        environment.jersey().register(injector.getInstance(ApplicationMessageResource.class));
     }
 
     private void configureCors(Environment environment) {
