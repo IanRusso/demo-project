@@ -1,0 +1,49 @@
+# Test Configuration for Integration Tests
+
+# Application-specific configuration
+applicationName: Demo Server Test
+
+# Server configuration - use different ports for testing
+server:
+  applicationConnectors:
+    - type: http
+      port: 0  # Random port
+  adminConnectors:
+    - type: http
+      port: 0  # Random port
+
+# Database configuration - use test database
+database:
+  driverClass: org.postgresql.Driver
+  user: gainfully_user
+  password: gainfully_password
+  url: jdbc:postgresql://localhost:5432/gainfully_db_test
+
+  # Connection pool settings
+  properties:
+    charSet: UTF-8
+
+  # Connection pool configuration
+  maxWaitForConnection: 1s
+  validationQuery: "SELECT 1"
+  validationQueryTimeout: 3s
+  initialSize: 2
+  minSize: 2
+  maxSize: 8
+  checkConnectionWhileIdle: true
+  evictionInterval: 10s
+  minIdleTime: 1 minute
+
+# Logging configuration
+logging:
+  level: WARN
+  loggers:
+    com.irusso.demoserver: INFO
+    org.flywaydb: WARN
+  appenders:
+    - type: console
+      threshold: ALL
+      timeZone: UTC
+      target: stdout
+      logFormat: "%-5p [%d{ISO8601}] %c: %m%n%rEx"
+
