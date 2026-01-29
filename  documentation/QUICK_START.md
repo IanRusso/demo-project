@@ -9,6 +9,7 @@ Make sure you have these installed:
 - ✅ Maven 3.6+
 - ✅ Node.js 14+
 - ✅ PostgreSQL 12+
+- ✅ PostGIS (optional, for geospatial features)
 
 ## Step 1: Setup Database
 
@@ -179,8 +180,12 @@ cd ui && npm run build
 ### Database
 
 ```bash
+# Run database migrations (apply schema updates)
+./scripts/migrate-db.sh  # Mac/Linux
+scripts\migrate-db.bat   # Windows
+
 # Reset database (WARNING: Deletes all data!)
-./setup-db.sh  # Re-run setup script
+./scripts/setup-db.sh  # Re-run setup script
 
 # Backup database
 pg_dump -U gainfully_user -d gainfully_db -h localhost > backup.sql

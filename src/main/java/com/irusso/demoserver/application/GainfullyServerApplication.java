@@ -63,6 +63,7 @@ public class GainfullyServerApplication
         environment.healthChecks().register("gainfully-server", healthCheck);
 
         // Register REST resources using Guice injection
+        environment.jersey().register(injector.getInstance(AuthResource.class));
         environment.jersey().register(injector.getInstance(UserResource.class));
         environment.jersey().register(injector.getInstance(EmployerResource.class));
         environment.jersey().register(injector.getInstance(JobPostingResource.class));
@@ -77,6 +78,7 @@ public class GainfullyServerApplication
         environment.jersey().register(injector.getInstance(SavedJobResource.class));
         environment.jersey().register(injector.getInstance(ApplicationMessageResource.class));
         environment.jersey().register(injector.getInstance(UserExperienceResource.class));
+        environment.jersey().register(injector.getInstance(CityResource.class));
     }
 
     private void configureCors(Environment environment) {

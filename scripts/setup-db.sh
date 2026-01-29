@@ -146,6 +146,39 @@ else
     exit 1
 fi
 
+# Enable PostGIS extensions (requires superuser privileges)
+echo -e "${BLUE}Enabling PostGIS extensions...${NC}"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS - connect as current user (who has superuser privileges)
+    POSTGIS_ERROR=$(psql -U $PG_USER -d $DB_NAME -c "CREATE EXTENSION IF NOT EXISTS postgis; CREATE EXTENSION IF NOT EXISTS postgis_topology;" 2>&1) || true
+else
+    # Linux - connect as postgres superuser
+    POSTGIS_ERROR=$(sudo -u postgres psql -d $DB_NAME -c "CREATE EXTENSION IF NOT EXISTS postgis; CREATE EXTENSION IF NOT EXISTS postgis_topology;" 2>&1) || true
+fi
+POSTGIS_EXIT_CODE=$?
+
+# Check if there was an error (either non-zero exit code or ERROR in output)
+if [ $POSTGIS_EXIT_CODE -ne 0 ] || echo "$POSTGIS_ERROR" | grep -q "ERROR:" 2>/dev/null; then
+    echo -e "${RED}✗ Failed to enable PostGIS extensions${NC}"
+    echo ""
+    echo "Error details:"
+    echo "$POSTGIS_ERROR"
+    echo ""
+    echo "PostGIS is not installed on your system."
+    echo ""
+    echo "To install PostGIS:"
+    echo "  macOS:   brew install postgresql@17 (PostGIS is included)"
+    echo "  Ubuntu:  sudo apt install postgresql-17-postgis-3"
+    echo ""
+    echo "After installing PostGIS, run this script again."
+    exit 1
+fi
+
+# Verify PostGIS installation
+POSTGIS_VERSION=$(PGPASSWORD=$DB_PASSWORD psql -U $DB_USER -d $DB_NAME -h $DB_HOST -t -c "SELECT PostGIS_Version();" 2>&1)
+echo -e "${GREEN}✓ PostGIS extensions enabled${NC}"
+echo "  Version: $(echo $POSTGIS_VERSION | xargs)"
+
 echo ""
 echo -e "${BLUE}========================================${NC}"
 echo -e "${GREEN}  Database Setup Complete!${NC}"

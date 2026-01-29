@@ -1,255 +1,130 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import {
   ThemeProvider,
-  createTheme,
   CssBaseline,
   Container,
   AppBar,
   Toolbar,
   Typography,
   Box,
-  Card,
-  CardContent,
   Button,
   Grid,
   Paper,
-  Chip,
-  CircularProgress,
-  Alert,
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
-  FiberManualRecord as StatusIcon,
+  Login as LoginIcon,
+  AccountCircle as ProfileIcon,
 } from '@mui/icons-material';
-
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
-  },
-});
-
-interface HealthCheck {
-  healthy: boolean;
-  message?: string;
-}
-
-interface HealthData {
-  'gainfully-server': HealthCheck;
-  deadlocks: HealthCheck;
-  postgresql?: HealthCheck;
-}
+import theme, { colors } from './theme';
+import CreateUser from './pages/CreateUser';
+import Login from './pages/Login';
+import Profile from './pages/Profile';
 
 const App: React.FC = () => {
-  const [count, setCount] = useState<number>(0);
-  const [healthData, setHealthData] = useState<HealthData | null>(null);
-  const [healthLoading, setHealthLoading] = useState<boolean>(true);
-  const [healthError, setHealthError] = useState<string | null>(null);
+  const [user, setUser] = useState<any | null>(null);
 
-  const fetchHealth = async () => {
-    try {
-      const response = await fetch('http://localhost:8081/healthcheck');
-      if (!response.ok) {
-        throw new Error('Failed to fetch health status');
+  // Load user from localStorage on mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (e) {
+        console.error('Failed to parse stored user:', e);
+        localStorage.removeItem('user');
       }
-      const data = await response.json();
-      setHealthData(data);
-      setHealthError(null);
-    } catch (error) {
-      setHealthError(error instanceof Error ? error.message : 'Unknown error');
-      setHealthData(null);
-    } finally {
-      setHealthLoading(false);
     }
+  }, []);
+
+  const handleLogin = (userData: any) => {
+    setUser(userData);
   };
 
-  useEffect(() => {
-    // Fetch health immediately
-    fetchHealth();
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem('user');
+  };
 
-    // Poll health every 5 seconds
-    const interval = setInterval(fetchHealth, 5000);
+  const handleRegister = (userData: any) => {
+    setUser(userData);
+  };
 
-    return () => clearInterval(interval);
-  }, []);
+  const handleUpdateUser = (userData: any) => {
+    setUser(userData);
+  };
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar>
-            <DashboardIcon sx={{ mr: 2 }} />
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Demo Project
-            </Typography>
-          </Toolbar>
-        </AppBar>
+      <Router>
+        <Box sx={{ flexGrow: 1, minHeight: '100vh', backgroundColor: colors.lightCyan }}>
+          <AppBar position="static">
+            <Toolbar>
+              <DashboardIcon sx={{ mr: 2 }} />
+              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                Gainfully
+              </Typography>
+              <Button
+                color="inherit"
+                component={Link}
+                to="/"
+                sx={{ mr: 2 }}
+              >
+                Dashboard
+              </Button>
+              {user ? (
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to="/profile"
+                  startIcon={<ProfileIcon />}
+                >
+                  Profile
+                </Button>
+              ) : (
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to="/login"
+                  startIcon={<LoginIcon />}
+                >
+                  Login
+                </Button>
+              )}
+            </Toolbar>
+          </AppBar>
 
-        <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Paper sx={{ p: 3, textAlign: 'center' }}>
-                <Typography variant="h3" gutterBottom>
-                  Welcome to Demo Project
-                </Typography>
-                <Typography variant="body1" color="text.secondary" paragraph>
-                  This is a React + TypeScript + Material UI demo application
-                </Typography>
-              </Paper>
-            </Grid>
-
-            {/* Backend Health Status Card */}
-            <Grid item xs={12}>
-              <Card>
-                <CardContent>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <StatusIcon color="primary" sx={{ mr: 1 }} />
-                      <Typography variant="h6">Backend Server Health</Typography>
-                    </Box>
-                    {healthLoading && <CircularProgress size={24} />}
-                  </Box>
-
-                  {healthError && (
-                    <Alert severity="error" sx={{ mb: 2 }}>
-                      {healthError} - Make sure the backend server is running on port 8081 (admin port)
-                    </Alert>
-                  )}
-
-                  {healthData && (
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} md={4}>
-                        <Box sx={{
-                          textAlign: 'center',
-                          p: 3,
-                          bgcolor: healthData['gainfully-server']?.healthy ? 'success.light' : 'error.light',
-                          borderRadius: 2
-                        }}>
-                          <Typography variant="subtitle2" color={healthData['gainfully-server']?.healthy ? 'success.dark' : 'error.dark'} gutterBottom>
-                            Gainfully Server
-                          </Typography>
-                          <Chip
-                            icon={<StatusIcon />}
-                            label={healthData['gainfully-server']?.healthy ? 'HEALTHY' : 'UNHEALTHY'}
-                            color={healthData['gainfully-server']?.healthy ? 'success' : 'error'}
-                            sx={{ mt: 1 }}
-                          />
-                          {healthData['gainfully-server']?.message && (
-                            <Typography variant="caption" display="block" sx={{ mt: 1 }} color={healthData['gainfully-server']?.healthy ? 'success.dark' : 'error.dark'}>
-                              {healthData['gainfully-server'].message}
-                            </Typography>
-                          )}
-                        </Box>
-                      </Grid>
-
-                      <Grid item xs={12} md={4}>
-                        <Box sx={{
-                          textAlign: 'center',
-                          p: 3,
-                          bgcolor: healthData.postgresql?.healthy ? 'success.light' : 'error.light',
-                          borderRadius: 2
-                        }}>
-                          <Typography variant="subtitle2" color={healthData.postgresql?.healthy ? 'success.dark' : 'error.dark'} gutterBottom>
-                            PostgreSQL Database
-                          </Typography>
-                          <Chip
-                            icon={<StatusIcon />}
-                            label={healthData.postgresql?.healthy ? 'CONNECTED' : 'DISCONNECTED'}
-                            color={healthData.postgresql?.healthy ? 'success' : 'error'}
-                            sx={{ mt: 1 }}
-                          />
-                          {healthData.postgresql?.message && (
-                            <Typography variant="caption" display="block" sx={{ mt: 1 }} color={healthData.postgresql?.healthy ? 'success.dark' : 'error.dark'}>
-                              {healthData.postgresql.message}
-                            </Typography>
-                          )}
-                        </Box>
-                      </Grid>
-
-                      <Grid item xs={12} md={4}>
-                        <Box sx={{
-                          textAlign: 'center',
-                          p: 3,
-                          bgcolor: healthData.deadlocks?.healthy ? 'success.light' : 'error.light',
-                          borderRadius: 2
-                        }}>
-                          <Typography variant="subtitle2" color={healthData.deadlocks?.healthy ? 'success.dark' : 'error.dark'} gutterBottom>
-                            Deadlocks Check
-                          </Typography>
-                          <Chip
-                            icon={<StatusIcon />}
-                            label={healthData.deadlocks?.healthy ? 'NO DEADLOCKS' : 'DEADLOCKS DETECTED'}
-                            color={healthData.deadlocks?.healthy ? 'success' : 'error'}
-                            sx={{ mt: 1 }}
-                          />
-                          {healthData.deadlocks?.message && (
-                            <Typography variant="caption" display="block" sx={{ mt: 1 }} color={healthData.deadlocks?.healthy ? 'success.dark' : 'error.dark'}>
-                              {healthData.deadlocks.message}
-                            </Typography>
-                          )}
-                        </Box>
-                      </Grid>
-
-                      <Grid item xs={12}>
-                        <Typography variant="caption" color="text.secondary">
-                          Last updated: {new Date().toLocaleTimeString()}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  )}
-
-                  {!healthData && !healthError && !healthLoading && (
-                    <Typography variant="body2" color="text.secondary">
-                      No health data available
-                    </Typography>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-
-            <Grid item xs={12}>
-              <Paper sx={{ p: 3, textAlign: 'center' }}>
-                <Typography variant="h5" gutterBottom>
-                  Interactive Counter Demo
-                </Typography>
-                <Typography variant="h2" color="primary" sx={{ my: 3 }}>
-                  {count}
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setCount(count + 1)}
-                  >
-                    Increment
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={() => setCount(0)}
-                  >
-                    Reset
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => setCount(count - 1)}
-                  >
-                    Decrement
-                  </Button>
-                </Box>
-              </Paper>
-            </Grid>
-          </Grid>
-        </Container>
-      </Box>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/create-user" element={<CreateUser onRegister={handleRegister} />} />
+            <Route path="/profile" element={<Profile user={user} onLogout={handleLogout} onUpdateUser={handleUpdateUser} />} />
+          </Routes>
+        </Box>
+      </Router>
     </ThemeProvider>
+  );
+};
+
+// Dashboard component extracted from main App
+const Dashboard: React.FC = () => {
+  return (
+    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <Paper sx={{ p: 3, textAlign: 'center' }}>
+            <Typography variant="h3" gutterBottom>
+              Welcome to Gainfully
+            </Typography>
+            <Typography variant="body1" color="text.secondary" paragraph>
+              Connect talent with opportunity
+            </Typography>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Container>
   );
 };
 

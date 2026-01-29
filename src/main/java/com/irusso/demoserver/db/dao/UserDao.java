@@ -31,11 +31,11 @@ public class UserDao extends StandardDao<User, Long> {
     private static final String COL_BACKGROUND_CHECK_STATUS = "background_check_status";
     private static final String COL_USER_RATING = "user_rating";
     private static final String COL_COMMUNICATION_RATING = "communication_rating";
-    private static final String COL_PROFESSIONALISM_RATING = "professionalism_rating";
-    private static final String COL_RELIABILITY_RATING = "reliability_rating";
     private static final String COL_SALARY_EXPECTATIONS_MIN = "salary_expectations_min";
     private static final String COL_SALARY_EXPECTATIONS_MAX = "salary_expectations_max";
     private static final String COL_ACTIVELY_SEEKING = "actively_seeking";
+    private static final String COL_PASSWORD_HASH = "password_hash";
+    private static final String COL_LAST_LOGIN_AT = "last_login_at";
     private static final String COL_CREATED_AT = "created_at";
     private static final String COL_UPDATED_AT = "updated_at";
 
@@ -145,6 +145,24 @@ public class UserDao extends StandardDao<User, Long> {
                 .setter((e, v) -> e.setActivelySeeking((Boolean) v))
                 .build())
             .addColumn(ColumnDefinition.<User>builder()
+                .columnName(COL_PASSWORD_HASH)
+                .javaType(String.class)
+                .nullable(true)
+                .insertable(true)
+                .updatable(true)
+                .getter(User::getPasswordHash)
+                .setter((e, v) -> e.setPasswordHash((String) v))
+                .build())
+            .addColumn(ColumnDefinition.<User>builder()
+                .columnName(COL_LAST_LOGIN_AT)
+                .javaType(Timestamp.class)
+                .nullable(true)
+                .insertable(true)
+                .updatable(true)
+                .getter(User::getLastLoginAt)
+                .setter((e, v) -> e.setLastLoginAt((Timestamp) v))
+                .build())
+            .addColumn(ColumnDefinition.<User>builder()
                 .columnName(COL_CREATED_AT)
                 .javaType(Timestamp.class)
                 .nullable(false)
@@ -185,6 +203,8 @@ public class UserDao extends StandardDao<User, Long> {
         user.setSalaryExpectationsMin(rs.getBigDecimal("salary_expectations_min"));
         user.setSalaryExpectationsMax(rs.getBigDecimal("salary_expectations_max"));
         user.setActivelySeeking(rs.getBoolean("actively_seeking"));
+        user.setPasswordHash(rs.getString("password_hash"));
+        user.setLastLoginAt(rs.getTimestamp("last_login_at"));
 
         Timestamp createdAt = rs.getTimestamp("created_at");
         if (createdAt != null) {
@@ -294,6 +314,48 @@ public class UserDao extends StandardDao<User, Long> {
             "id", id,
             "rating", rating,
             "updatedAt", Timestamp.from(Instant.now())
+        );
+        return rowsAffected > 0;
+    }
+
+    /**
+     * Update user's password hash.
+     *
+     * @param id The user ID
+     * @param passwordHash The BCrypt hashed password
+     * @return true if update was successful
+     */
+    public boolean updatePasswordHash(Long id, String passwordHash) {
+        String sql = """
+            UPDATE users
+            SET password_hash = :passwordHash, updated_at = :updatedAt
+            WHERE id = :id
+            """;
+
+        int rowsAffected = executeUpdate(sql,
+            "id", id,
+            "passwordHash", passwordHash,
+            "updatedAt", Timestamp.from(Instant.now())
+        );
+        return rowsAffected > 0;
+    }
+
+    /**
+     * Update user's last login timestamp.
+     *
+     * @param id The user ID
+     * @return true if update was successful
+     */
+    public boolean updateLastLogin(Long id) {
+        String sql = """
+            UPDATE users
+            SET last_login_at = :lastLoginAt
+            WHERE id = :id
+            """;
+
+        int rowsAffected = executeUpdate(sql,
+            "id", id,
+            "lastLoginAt", Timestamp.from(Instant.now())
         );
         return rowsAffected > 0;
     }

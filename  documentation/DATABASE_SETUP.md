@@ -5,6 +5,7 @@ This guide will help you set up PostgreSQL for the Gainfully application.
 ## Prerequisites
 
 - PostgreSQL 12 or higher installed
+- PostGIS extension (optional, for geospatial features)
 - Access to create databases and users
 
 ## Installation
@@ -14,6 +15,9 @@ This guide will help you set up PostgreSQL for the Gainfully application.
 ```bash
 # Install PostgreSQL
 brew install postgresql@15
+
+# Install PostGIS (optional, for geospatial features)
+brew install postgis
 
 # Start PostgreSQL service
 brew services start postgresql@15
@@ -29,6 +33,9 @@ pg_ctl -D /opt/homebrew/var/postgresql@15 start
 sudo apt update
 sudo apt install postgresql postgresql-contrib
 
+# Install PostGIS (optional, for geospatial features)
+sudo apt install postgresql-15-postgis-3
+
 # Start PostgreSQL service
 sudo systemctl start postgresql
 sudo systemctl enable postgresql
@@ -39,6 +46,7 @@ sudo systemctl enable postgresql
 1. Download PostgreSQL installer from https://www.postgresql.org/download/windows/
 2. Run the installer and follow the setup wizard
 3. Remember the password you set for the `postgres` user
+4. (Optional) Install PostGIS using Stack Builder or download from https://postgis.net/windows_downloads/
 
 ## Quick Setup (Automated)
 
@@ -61,10 +69,14 @@ The script will:
 - ✅ Create the `gainfully_db` database
 - ✅ Create the `gainfully_user` user with password
 - ✅ Grant all necessary privileges
+- ✅ Enable PostGIS extension (if available)
 - ✅ Test the database connection
+- ✅ Verify PostGIS installation
 - ✅ Display configuration summary
 
 If PostgreSQL is not running, the script will prompt you to start it.
+
+**Note:** If PostGIS is not installed, the script will still create the database successfully but will display a warning. PostGIS features will not be available until you install the extension.
 
 ---
 
@@ -108,11 +120,37 @@ GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO gainfully_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO gainfully_user;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO gainfully_user;
 
+-- Enable PostGIS extension (optional, for geospatial features)
+CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE EXTENSION IF NOT EXISTS postgis_topology;
+
 -- Exit psql
 \q
 ```
 
-### 2. Verify Connection
+### 2. Enable PostGIS (Optional)
+
+If you want to use geospatial features, enable the PostGIS extension:
+
+```bash
+# Connect to the database
+psql -U gainfully_user -d gainfully_db -h localhost
+```
+
+Then run:
+
+```sql
+-- Enable PostGIS
+CREATE EXTENSION IF NOT EXISTS postgis;
+CREATE EXTENSION IF NOT EXISTS postgis_topology;
+
+-- Verify PostGIS is installed
+SELECT PostGIS_Version();
+```
+
+You should see the PostGIS version information. If you get an error, make sure PostGIS is installed on your system (see Installation section above).
+
+### 3. Verify Connection
 
 Test the connection with the new user:
 

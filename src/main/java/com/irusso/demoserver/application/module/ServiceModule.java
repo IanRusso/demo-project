@@ -133,5 +133,14 @@ public class ServiceModule extends AbstractModule {
     public ApplicationMessageService provideApplicationMessageService(ApplicationMessageDao applicationMessageDao) {
         return new ApplicationMessageService(applicationMessageDao);
     }
+
+    /**
+     * Provides a singleton instance of CityService.
+     */
+    @Provides
+    @Singleton
+    public CityService provideCityService(CityDao cityDao) {
+        return new CityService(cityDao);
+    }
 }
 

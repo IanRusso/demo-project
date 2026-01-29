@@ -82,9 +82,5 @@ Option not to show jobs that you cannot be considered for
 - Required cover letter
 - Guaranteed Response Times
 
-
-## FRONTEND
-
-## BACKEND
-
-## DATABASE
+## Home Page
+- Shows metrics on jobs, companies, etc.

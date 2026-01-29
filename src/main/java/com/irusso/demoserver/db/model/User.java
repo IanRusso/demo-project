@@ -1,8 +1,10 @@
 package com.irusso.demoserver.db.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Instant;
 
 /**
@@ -25,6 +27,8 @@ public class User {
     private BigDecimal salaryExpectationsMin;
     private BigDecimal salaryExpectationsMax;
     private Boolean activelySeeking;
+    private String passwordHash;
+    private Timestamp lastLoginAt;
     private Instant createdAt;
     private Instant updatedAt;
 
@@ -180,6 +184,33 @@ public class User {
     @JsonProperty
     public void setActivelySeeking(Boolean activelySeeking) {
         this.activelySeeking = activelySeeking;
+    }
+
+    /**
+     * Get the password hash. This is marked with @JsonIgnore to prevent
+     * the password hash from being serialized in API responses.
+     */
+    @JsonIgnore
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    /**
+     * Set the password hash. This should only be set with a BCrypt hashed password.
+     */
+    @JsonIgnore
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    @JsonProperty
+    public Timestamp getLastLoginAt() {
+        return lastLoginAt;
+    }
+
+    @JsonProperty
+    public void setLastLoginAt(Timestamp lastLoginAt) {
+        this.lastLoginAt = lastLoginAt;
     }
 
     @JsonProperty
