@@ -40,8 +40,9 @@ interface HealthCheck {
 }
 
 interface HealthData {
-  'demo-server': HealthCheck;
+  'gainfully-server': HealthCheck;
   deadlocks: HealthCheck;
+  postgresql?: HealthCheck;
 }
 
 const App: React.FC = () => {
@@ -123,31 +124,55 @@ const App: React.FC = () => {
 
                   {healthData && (
                     <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={4}>
                         <Box sx={{
                           textAlign: 'center',
                           p: 3,
-                          bgcolor: healthData['demo-server']?.healthy ? 'success.light' : 'error.light',
+                          bgcolor: healthData['gainfully-server']?.healthy ? 'success.light' : 'error.light',
                           borderRadius: 2
                         }}>
-                          <Typography variant="subtitle2" color={healthData['demo-server']?.healthy ? 'success.dark' : 'error.dark'} gutterBottom>
-                            Demo Server
+                          <Typography variant="subtitle2" color={healthData['gainfully-server']?.healthy ? 'success.dark' : 'error.dark'} gutterBottom>
+                            Gainfully Server
                           </Typography>
                           <Chip
                             icon={<StatusIcon />}
-                            label={healthData['demo-server']?.healthy ? 'HEALTHY' : 'UNHEALTHY'}
-                            color={healthData['demo-server']?.healthy ? 'success' : 'error'}
+                            label={healthData['gainfully-server']?.healthy ? 'HEALTHY' : 'UNHEALTHY'}
+                            color={healthData['gainfully-server']?.healthy ? 'success' : 'error'}
                             sx={{ mt: 1 }}
                           />
-                          {healthData['demo-server']?.message && (
-                            <Typography variant="caption" display="block" sx={{ mt: 1 }} color={healthData['demo-server']?.healthy ? 'success.dark' : 'error.dark'}>
-                              {healthData['demo-server'].message}
+                          {healthData['gainfully-server']?.message && (
+                            <Typography variant="caption" display="block" sx={{ mt: 1 }} color={healthData['gainfully-server']?.healthy ? 'success.dark' : 'error.dark'}>
+                              {healthData['gainfully-server'].message}
                             </Typography>
                           )}
                         </Box>
                       </Grid>
 
-                      <Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={4}>
+                        <Box sx={{
+                          textAlign: 'center',
+                          p: 3,
+                          bgcolor: healthData.postgresql?.healthy ? 'success.light' : 'error.light',
+                          borderRadius: 2
+                        }}>
+                          <Typography variant="subtitle2" color={healthData.postgresql?.healthy ? 'success.dark' : 'error.dark'} gutterBottom>
+                            PostgreSQL Database
+                          </Typography>
+                          <Chip
+                            icon={<StatusIcon />}
+                            label={healthData.postgresql?.healthy ? 'CONNECTED' : 'DISCONNECTED'}
+                            color={healthData.postgresql?.healthy ? 'success' : 'error'}
+                            sx={{ mt: 1 }}
+                          />
+                          {healthData.postgresql?.message && (
+                            <Typography variant="caption" display="block" sx={{ mt: 1 }} color={healthData.postgresql?.healthy ? 'success.dark' : 'error.dark'}>
+                              {healthData.postgresql.message}
+                            </Typography>
+                          )}
+                        </Box>
+                      </Grid>
+
+                      <Grid item xs={12} md={4}>
                         <Box sx={{
                           textAlign: 'center',
                           p: 3,

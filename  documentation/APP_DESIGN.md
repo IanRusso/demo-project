@@ -10,6 +10,7 @@ A job site driven by reciprocal communication and transparency
 2. Capture EVERYTHING
    1. When you accomplish something at work or at home - record it
    2. AI extracts skills from those experiences and summarizes for employers
+   3. AI can also understand what your current value in the market would be - depending on industry, location, etc.
 
 ## User Profiles
 ### Data
