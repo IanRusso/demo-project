@@ -145,5 +145,15 @@ public class DaoModule extends AbstractModule {
     public ApplicationMessageDao provideApplicationMessageDao(Jdbi jdbi) {
         return new ApplicationMessageDao(jdbi);
     }
+
+
+    /**
+     * Provides a singleton instance of UserExperienceDao.
+     */
+    @Provides
+    @Singleton
+    public UserExperienceDao provideUserExperienceDao(Jdbi jdbi) {
+        return new UserExperienceDao(jdbi);
+    }
 }
 
