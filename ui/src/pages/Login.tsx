@@ -76,13 +76,10 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         onLogin(result.data);
       }
 
-      // Redirect to home page after 1.5 seconds
-      setTimeout(() => {
-        navigate('/');
-      }, 1500);
+      // Keep loading state and redirect immediately
+      navigate('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred during login');
-    } finally {
       setLoading(false);
     }
   };

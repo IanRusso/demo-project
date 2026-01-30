@@ -164,5 +164,23 @@ public class DaoModule extends AbstractModule {
     public CityDao provideCityDao(Jdbi jdbi) {
         return new CityDao(jdbi);
     }
+
+    /**
+     * Provides a singleton instance of IndustryDao.
+     */
+    @Provides
+    @Singleton
+    public IndustryDao provideIndustryDao(Jdbi jdbi) {
+        return new IndustryDao(jdbi);
+    }
+
+    /**
+     * Provides a singleton instance of ProfessionDao.
+     */
+    @Provides
+    @Singleton
+    public ProfessionDao provideProfessionDao(Jdbi jdbi) {
+        return new ProfessionDao(jdbi);
+    }
 }
 

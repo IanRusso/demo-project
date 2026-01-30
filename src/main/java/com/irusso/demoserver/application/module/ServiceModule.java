@@ -142,5 +142,23 @@ public class ServiceModule extends AbstractModule {
     public CityService provideCityService(CityDao cityDao) {
         return new CityService(cityDao);
     }
+
+    /**
+     * Provides a singleton instance of IndustryService.
+     */
+    @Provides
+    @Singleton
+    public IndustryService provideIndustryService(IndustryDao industryDao) {
+        return new IndustryService(industryDao);
+    }
+
+    /**
+     * Provides a singleton instance of ProfessionService.
+     */
+    @Provides
+    @Singleton
+    public ProfessionService provideProfessionService(ProfessionDao professionDao) {
+        return new ProfessionService(professionDao);
+    }
 }
 

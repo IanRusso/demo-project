@@ -35,6 +35,8 @@ import {
   ContactMail as ContactIcon,
 } from '@mui/icons-material';
 import { colors } from '../theme';
+import CityAutocomplete from '../components/CityAutocomplete';
+import MonthYearPicker from '../components/MonthYearPicker';
 
 interface User {
   id: number;
@@ -452,24 +454,20 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdateUser }) => {
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
+                    <MonthYearPicker
                       label="Start Date"
-                      type="month"
                       value={newWorkEntry.startDate}
-                      onChange={(e) => handleWorkEntryChange('startDate', e.target.value)}
-                      InputLabelProps={{ shrink: true }}
+                      onChange={(value) => handleWorkEntryChange('startDate', value)}
+                      fullWidth
                     />
                   </Grid>
                   <Grid item xs={12} sm={6}>
-                    <TextField
-                      fullWidth
+                    <MonthYearPicker
                       label="End Date"
-                      type="month"
                       value={newWorkEntry.endDate}
-                      onChange={(e) => handleWorkEntryChange('endDate', e.target.value)}
+                      onChange={(value) => handleWorkEntryChange('endDate', value)}
                       disabled={newWorkEntry.current}
-                      InputLabelProps={{ shrink: true }}
+                      fullWidth
                     />
                   </Grid>
                   <Grid item xs={12}>
@@ -697,11 +695,12 @@ const Profile: React.FC<ProfileProps> = ({ user, onLogout, onUpdateUser }) => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 {isEditing ? (
-                  <TextField
-                    fullWidth
-                    label="Location"
+                  <CityAutocomplete
                     value={editedUser.location || ''}
-                    onChange={(e) => handleInputChange('location', e.target.value)}
+                    onChange={(value) => handleInputChange('location', value)}
+                    label="Location"
+                    placeholder="Search for a city..."
+                    fullWidth
                   />
                 ) : (
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>

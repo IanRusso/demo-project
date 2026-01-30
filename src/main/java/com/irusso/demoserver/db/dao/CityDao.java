@@ -25,7 +25,6 @@ public class CityDao extends StandardDao<City, Long> {
     private static final String COL_GEONAME_ID = "geoname_id";
     private static final String COL_NAME = "name";
     private static final String COL_ASCII_NAME = "ascii_name";
-    private static final String COL_ALTERNATE_NAMES = "alternate_names";
     private static final String COL_LATITUDE = "latitude";
     private static final String COL_LONGITUDE = "longitude";
     private static final String COL_FEATURE_CLASS = "feature_class";
@@ -71,13 +70,6 @@ public class CityDao extends StandardDao<City, Long> {
                 .nullable(true)
                 .getter(City::getAsciiName)
                 .setter((e, v) -> e.setAsciiName((String) v))
-                .build())
-            .addColumn(ColumnDefinition.<City>builder()
-                .columnName(COL_ALTERNATE_NAMES)
-                .javaType(String.class)
-                .nullable(true)
-                .getter(City::getAlternateNames)
-                .setter((e, v) -> e.setAlternateNames((String) v))
                 .build())
             .addColumn(ColumnDefinition.<City>builder()
                 .columnName(COL_LATITUDE)
@@ -214,7 +206,6 @@ public class CityDao extends StandardDao<City, Long> {
         city.setGeonameId(rs.getLong(COL_GEONAME_ID));
         city.setName(rs.getString(COL_NAME));
         city.setAsciiName(rs.getString(COL_ASCII_NAME));
-        city.setAlternateNames(rs.getString(COL_ALTERNATE_NAMES));
         city.setLatitude(rs.getBigDecimal(COL_LATITUDE));
         city.setLongitude(rs.getBigDecimal(COL_LONGITUDE));
         city.setFeatureClass(rs.getString(COL_FEATURE_CLASS));
@@ -259,12 +250,12 @@ public class CityDao extends StandardDao<City, Long> {
 
         String sql = """
             INSERT INTO cities (
-                geoname_id, name, ascii_name, alternate_names, latitude, longitude,
+                geoname_id, name, ascii_name, latitude, longitude,
                 feature_class, feature_code, country_code, cc2, admin1_code, admin2_code,
                 admin3_code, admin4_code, population, elevation, dem, timezone,
                 modification_date, location, created_at, updated_at
             ) VALUES (
-                :geonameId, :name, :asciiName, :alternateNames, :latitude, :longitude,
+                :geonameId, :name, :asciiName, :latitude, :longitude,
                 :featureClass, :featureCode, :countryCode, :cc2, :admin1Code, :admin2Code,
                 :admin3Code, :admin4Code, :population, :elevation, :dem, :timezone,
                 :modificationDate, ST_SetSRID(ST_MakePoint(:longitude, :latitude), 4326)::geography,
@@ -287,7 +278,6 @@ public class CityDao extends StandardDao<City, Long> {
                 batch.bind("geonameId", city.getGeonameId())
                     .bind("name", city.getName())
                     .bind("asciiName", city.getAsciiName())
-                    .bind("alternateNames", city.getAlternateNames())
                     .bind("latitude", city.getLatitude())
                     .bind("longitude", city.getLongitude())
                     .bind("featureClass", city.getFeatureClass())

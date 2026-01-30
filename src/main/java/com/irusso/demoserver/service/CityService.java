@@ -170,7 +170,7 @@ public class CityService {
      * 0: geonameid
      * 1: name
      * 2: asciiname
-     * 3: alternatenames
+     * 3: alternatenames (skipped - not stored)
      * 4: latitude
      * 5: longitude
      * 6: feature class
@@ -237,7 +237,7 @@ public class CityService {
         city.setGeonameId(parseLong(fields[0]));
         city.setName(fields[1]);
         city.setAsciiName(fields[2]);
-        city.setAlternateNames(fields[3]);
+        // Skip fields[3] - alternate names (not stored)
         city.setLatitude(parseBigDecimal(fields[4]));
         city.setLongitude(parseBigDecimal(fields[5]));
         city.setFeatureClass(fields[6]);

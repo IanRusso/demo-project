@@ -17,6 +17,8 @@ import {
   Login as LoginIcon,
   AccountCircle as ProfileIcon,
 } from '@mui/icons-material';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import theme, { colors } from './theme';
 import CreateUser from './pages/CreateUser';
 import Login from './pages/Login';
@@ -57,53 +59,60 @@ const App: React.FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <Box sx={{ flexGrow: 1, minHeight: '100vh', backgroundColor: colors.lightCyan }}>
-          <AppBar position="static">
-            <Toolbar>
-              <DashboardIcon sx={{ mr: 2 }} />
-              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                Gainfully
-              </Typography>
-              <Button
-                color="inherit"
-                component={Link}
-                to="/"
-                sx={{ mr: 2 }}
-              >
-                Dashboard
-              </Button>
-              {user ? (
-                <Button
-                  color="inherit"
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <CssBaseline />
+        <Router>
+          <Box sx={{ flexGrow: 1, minHeight: '100vh', backgroundColor: colors.lightCyan }}>
+            <AppBar position="static">
+              <Toolbar>
+                <DashboardIcon sx={{ mr: 2 }} />
+                <Typography
+                  variant="h6"
                   component={Link}
-                  to="/profile"
-                  startIcon={<ProfileIcon />}
+                  to="/"
+                  sx={{
+                    flexGrow: 1,
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      opacity: 0.8,
+                    },
+                  }}
                 >
-                  Profile
-                </Button>
-              ) : (
-                <Button
-                  color="inherit"
-                  component={Link}
-                  to="/login"
-                  startIcon={<LoginIcon />}
-                >
-                  Login
-                </Button>
-              )}
-            </Toolbar>
-          </AppBar>
+                  Gainfully
+                </Typography>
+                {user ? (
+                  <Button
+                    color="inherit"
+                    component={Link}
+                    to="/profile"
+                    startIcon={<ProfileIcon />}
+                  >
+                    Profile
+                  </Button>
+                ) : (
+                  <Button
+                    color="inherit"
+                    component={Link}
+                    to="/login"
+                    startIcon={<LoginIcon />}
+                  >
+                    Login
+                  </Button>
+                )}
+              </Toolbar>
+            </AppBar>
 
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="/create-user" element={<CreateUser onRegister={handleRegister} />} />
-            <Route path="/profile" element={<Profile user={user} onLogout={handleLogout} onUpdateUser={handleUpdateUser} />} />
-          </Routes>
-        </Box>
-      </Router>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/login" element={<Login onLogin={handleLogin} />} />
+              <Route path="/create-user" element={<CreateUser onRegister={handleRegister} />} />
+              <Route path="/profile" element={<Profile user={user} onLogout={handleLogout} onUpdateUser={handleUpdateUser} />} />
+            </Routes>
+          </Box>
+        </Router>
+      </LocalizationProvider>
     </ThemeProvider>
   );
 };

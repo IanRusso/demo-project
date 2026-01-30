@@ -15,7 +15,6 @@ public class City {
     private Long geonameId;
     private String name;
     private String asciiName;
-    private String alternateNames;
     private BigDecimal latitude;
     private BigDecimal longitude;
     private String featureClass;
@@ -69,16 +68,7 @@ public class City {
     public void setAsciiName(String asciiName) {
         this.asciiName = asciiName;
     }
-    
-    @JsonProperty
-    public String getAlternateNames() {
-        return alternateNames;
-    }
-    
-    public void setAlternateNames(String alternateNames) {
-        this.alternateNames = alternateNames;
-    }
-    
+
     @JsonProperty
     public BigDecimal getLatitude() {
         return latitude;
