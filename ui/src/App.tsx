@@ -3,14 +3,11 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import {
   ThemeProvider,
   CssBaseline,
-  Container,
   AppBar,
   Toolbar,
   Typography,
   Box,
   Button,
-  Grid,
-  Paper,
 } from '@mui/material';
 import {
   Dashboard as DashboardIcon,
@@ -23,6 +20,7 @@ import theme, { colors } from './theme';
 import CreateUser from './pages/CreateUser';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
+import Home from './pages/Home';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any | null>(null);
@@ -65,12 +63,12 @@ const App: React.FC = () => {
           <Box sx={{ flexGrow: 1, minHeight: '100vh', backgroundColor: colors.lightCyan }}>
             <AppBar position="static">
               <Toolbar>
-                <DashboardIcon sx={{ mr: 2 }} />
-                <Typography
-                  variant="h6"
+                <Box
                   component={Link}
                   to="/"
                   sx={{
+                    display: 'flex',
+                    alignItems: 'center',
                     flexGrow: 1,
                     textDecoration: 'none',
                     color: 'inherit',
@@ -80,8 +78,11 @@ const App: React.FC = () => {
                     },
                   }}
                 >
-                  Gainfully
-                </Typography>
+                  <DashboardIcon sx={{ mr: 2 }} />
+                  <Typography variant="h6">
+                    Gainfully
+                  </Typography>
+                </Box>
                 {user ? (
                   <Button
                     color="inherit"
@@ -105,7 +106,7 @@ const App: React.FC = () => {
             </AppBar>
 
             <Routes>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/" element={<Home user={user} />} />
               <Route path="/login" element={<Login onLogin={handleLogin} />} />
               <Route path="/create-user" element={<CreateUser onRegister={handleRegister} />} />
               <Route path="/profile" element={<Profile user={user} onLogout={handleLogout} onUpdateUser={handleUpdateUser} />} />
@@ -114,26 +115,6 @@ const App: React.FC = () => {
         </Router>
       </LocalizationProvider>
     </ThemeProvider>
-  );
-};
-
-// Dashboard component extracted from main App
-const Dashboard: React.FC = () => {
-  return (
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Paper sx={{ p: 3, textAlign: 'center' }}>
-            <Typography variant="h3" gutterBottom>
-              Welcome to Gainfully
-            </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
-              Connect talent with opportunity
-            </Typography>
-          </Paper>
-        </Grid>
-      </Grid>
-    </Container>
   );
 };
 

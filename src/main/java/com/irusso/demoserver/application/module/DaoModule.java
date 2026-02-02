@@ -182,5 +182,32 @@ public class DaoModule extends AbstractModule {
     public ProfessionDao provideProfessionDao(Jdbi jdbi) {
         return new ProfessionDao(jdbi);
     }
+
+    /**
+     * Provides a singleton instance of UserIndustryDao.
+     */
+    @Provides
+    @Singleton
+    public UserIndustryDao provideUserIndustryDao(Jdbi jdbi) {
+        return new UserIndustryDao(jdbi);
+    }
+
+    /**
+     * Provides a singleton instance of UserProfessionDao.
+     */
+    @Provides
+    @Singleton
+    public UserProfessionDao provideUserProfessionDao(Jdbi jdbi) {
+        return new UserProfessionDao(jdbi);
+    }
+
+    /**
+     * Provides a singleton instance of UserConnectionDao.
+     */
+    @Provides
+    @Singleton
+    public UserConnectionDao provideUserConnectionDao(Jdbi jdbi) {
+        return new UserConnectionDao(jdbi);
+    }
 }
 

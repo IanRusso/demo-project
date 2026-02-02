@@ -18,3 +18,7 @@ Add table "specializations" with the standard columns plus the following
 - name
 Add user info "Specialization"
 - How would we do this? This could be very complicated...
+
+Two home page feeds
+1. Your Network
+2. Hot Posts

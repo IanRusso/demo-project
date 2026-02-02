@@ -160,5 +160,32 @@ public class ServiceModule extends AbstractModule {
     public ProfessionService provideProfessionService(ProfessionDao professionDao) {
         return new ProfessionService(professionDao);
     }
+
+    /**
+     * Provides a singleton instance of UserIndustryService.
+     */
+    @Provides
+    @Singleton
+    public UserIndustryService provideUserIndustryService(UserIndustryDao userIndustryDao) {
+        return new UserIndustryService(userIndustryDao);
+    }
+
+    /**
+     * Provides a singleton instance of UserProfessionService.
+     */
+    @Provides
+    @Singleton
+    public UserProfessionService provideUserProfessionService(UserProfessionDao userProfessionDao) {
+        return new UserProfessionService(userProfessionDao);
+    }
+
+    /**
+     * Provides a singleton instance of UserConnectionService.
+     */
+    @Provides
+    @Singleton
+    public UserConnectionService provideUserConnectionService(UserConnectionDao userConnectionDao) {
+        return new UserConnectionService(userConnectionDao);
+    }
 }
 

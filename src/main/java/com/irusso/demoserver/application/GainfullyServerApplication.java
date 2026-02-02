@@ -81,6 +81,9 @@ public class GainfullyServerApplication
         environment.jersey().register(injector.getInstance(CityResource.class));
         environment.jersey().register(injector.getInstance(IndustryResource.class));
         environment.jersey().register(injector.getInstance(ProfessionResource.class));
+        environment.jersey().register(injector.getInstance(UserIndustryResource.class));
+        environment.jersey().register(injector.getInstance(UserProfessionResource.class));
+        environment.jersey().register(injector.getInstance(UserConnectionResource.class));
     }
 
     private void configureCors(Environment environment) {
